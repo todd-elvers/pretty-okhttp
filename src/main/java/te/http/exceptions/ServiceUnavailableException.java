@@ -9,8 +9,12 @@ public class ServiceUnavailableException extends IOException {
     public Request request;
     public Throwable rootCause;
 
+    public ServiceUnavailableException(String message, Throwable ex) {
+        super(message, ex);
+    }
+
     public ServiceUnavailableException(Throwable exception, Request request) {
-        super(
+        this(
                 String.format("%s is down or not responding.", request.url().toString()),
                 exception
         );
