@@ -1,9 +1,6 @@
 package te.http.handling;
 
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-
 import io.vavr.control.Try;
-import okhttp3.Headers;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
@@ -23,8 +20,6 @@ public class HttpResponse implements HttpRequestHandling{
     private Integer statusCode;
     private Response originalResponse;
     private Request originalRequest;
-
-    public HttpResponse(){}
 
     public HttpResponse(Response okHttpResponse) {
         this.wasSuccessful = okHttpResponse.isSuccessful();

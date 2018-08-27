@@ -6,7 +6,7 @@ import te.http.handling.HttpResponse;
 
 public class Non200ResponseException extends IOException {
 
-    public HttpResponse httpResponse;
+    private HttpResponse httpResponse;
 
     public Non200ResponseException(HttpResponse httpResponse) {
         super(
@@ -27,4 +27,7 @@ public class Non200ResponseException extends IOException {
         this.httpResponse = httpResponse;
     }
 
+    public HttpResponse getHttpResponse() {
+        return httpResponse;
+    }
 }
