@@ -24,8 +24,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class MultiFormatLocalDateDeserializer implements JsonDeserializer<LocalDate> {
 
-    private static final Predicate<String> IS_UNIX_EPOCH = Pattern.compile("[0-9]{9,}").asPredicate();
-    private static final List<LocalDateFormat> LOCAL_DATE_FORMATS = Arrays.asList(
+    protected static final Predicate<String> IS_UNIX_EPOCH = Pattern.compile("[0-9]{9,}").asPredicate();
+    protected static final List<LocalDateFormat> LOCAL_DATE_FORMATS = Arrays.asList(
             new LocalDateFormat("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
             new LocalDateFormat("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}"),
             new LocalDateFormat("MM-dd-yyyy", "[0-9]{2}-[0-9]{2}-[0-9]{4}")

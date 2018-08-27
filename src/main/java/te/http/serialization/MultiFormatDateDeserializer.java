@@ -23,8 +23,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class MultiFormatDateDeserializer implements JsonDeserializer<Date> {
 
-    private static final Predicate<String> IS_UNIX_EPOCH = Pattern.compile("[0-9]{9,}").asPredicate();
-    private static final List<DateFormat> DATE_FORMATS = Arrays.asList(
+    protected static final Predicate<String> IS_UNIX_EPOCH = Pattern.compile("[0-9]{9,}").asPredicate();
+    protected static final List<DateFormat> DATE_FORMATS = Arrays.asList(
             new DateFormat("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
             new DateFormat("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}"),
             new DateFormat("MM-dd-yyyy", "[0-9]{2}-[0-9]{2}-[0-9]{4}")
