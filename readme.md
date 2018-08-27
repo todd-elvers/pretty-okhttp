@@ -1,4 +1,4 @@
-mostly-okhttp
+pretty-okhttp
 ---------------------------------
 
 Combines the powers of [OkHttp](http://square.github.io/okhttp/), 
@@ -13,7 +13,7 @@ serialization/deserialization.
 
 ## How to use it
 
-* Implement the `HttpRequestHandling` interface 
+* Add `implements HttpRequestHandling` to your class declaration 
 * If necessary customize any of the default behavior (headers, etc.) 
 * Call the relevant `executeGET`, `executePOST`, or `executeFormPOST` method
     * If you need more customized behavior you can build the `Request` object yourself
@@ -22,6 +22,8 @@ serialization/deserialization.
     * An `HttpResponse` object with the response of the HTTP request
     * A `Non200ResponseException` if the response returned a non-200 value
     * A `ServiceUnavailableException` if the request failed completely
+
+That's it!
 
 #### Finer details
 * The `HttpResponse` also contains the `Request` that was used to get it
@@ -49,7 +51,8 @@ class WebsiteHealthChecker implements HttpRequestHandling {
     // Traditional implementation
     public boolean isWebsiteHealthy(String url) {
         try {
-            return executeGET(url);
+            executeGET(url);
+            return true;
         } catch(Non200ResponseException | ServiceUnavailableException ex) {
             return false;
         }
@@ -67,7 +70,7 @@ class WebsiteHealthChecker implements HttpRequestHandling {
 
 <br/>
 
-##### POSTing a form to a webservice:
+##### POST a form to a webservice:
 
 ```java
 class FormUploader implements HttpRequestHandling {
@@ -78,9 +81,7 @@ class FormUploader implements HttpRequestHandling {
             HttpResponse httpResponse = executeFormPOST(url, formData);
             
             return httpResponse.getStatusCode();
-        } catch(Non200ResponseException ex) {
-            return ex.httpResponse.statusCode;
-        } catch(ServiceUnavailableException ex) {
+        } catch(Non200ResponseException | ServiceUnavailableException ex) {
             return null;
         }
     }
