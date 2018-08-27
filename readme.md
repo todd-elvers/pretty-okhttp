@@ -4,8 +4,7 @@ pretty-okhttp
 Combines the powers of [OkHttp](http://square.github.io/okhttp/), 
 [Java 8 interfaces](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html),
 and Google's [GSON](https://github.com/google/gson) to create a thread-safe, simple, 
-easy-to-use, and easy-to-test interface with built-in JSON 
-serialization/deserialization.
+easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 
 <br/>
@@ -31,6 +30,12 @@ That's it!
 can inspect the request & response further if necessary
 * The `ServiceUnavailableException` class contains the exception that was thrown and the
 `Request` that failed
+* The default object serialization logic for `Date` or `LocalDate` is to use ISO-8601
+    * This means that the time information is lost here, so if you require the time to be preserved you'll
+    either have to use the linux epoch in the JSON or register your own type adapter to the GSON instance
+    in `JsonMarshalling`.
+* The default object deserialization logic for `Date` or `LocalDate` is to try multiple different formats
+    * See `MultiFormatDateDeserializer` or `MultiFormatLocalDateDeserializer` for details
 
 
 <br/>
