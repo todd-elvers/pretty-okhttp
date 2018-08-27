@@ -11,7 +11,6 @@ import java.lang.reflect.Type;
 import java.util.Date;
 
 public class DateToISO8601Serializer implements JsonSerializer<Date> {
-    //TODO: Test static declaration like this again
     private static final FastDateFormat ISO8601_FORMATTER = FastDateFormat.getInstance("yyyy-MM-dd");
 
     @Override
