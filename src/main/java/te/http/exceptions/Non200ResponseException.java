@@ -8,8 +8,12 @@ public class Non200ResponseException extends IOException {
 
     private HttpResponse httpResponse;
 
+    public Non200ResponseException(String message) {
+        super(message);
+    }
+
     public Non200ResponseException(HttpResponse httpResponse) {
-        super(
+        this(
                 String.format(
                         "Request returned non-200!" +
                                 "\n\tURL = %s" +
