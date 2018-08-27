@@ -12,7 +12,7 @@ import okhttp3.ResponseBody;
  * Also abstracts away the fact that OkHttp's {@link Response} object only allows
  * you to read a response once by caching it in this object upon instantiation.
  */
-public class HttpResponse implements HttpRequestHandling{
+public class HttpResponse implements HttpRequestHandling {
 
     private boolean wasSuccessful;
     private String body;
@@ -20,6 +20,8 @@ public class HttpResponse implements HttpRequestHandling{
     private Integer statusCode;
     private Response originalResponse;
     private Request originalRequest;
+
+    public HttpResponse() {}
 
     public HttpResponse(Response okHttpResponse) {
         this.wasSuccessful = okHttpResponse.isSuccessful();
@@ -38,24 +40,54 @@ public class HttpResponse implements HttpRequestHandling{
         return !wasSuccessful;
     }
 
+    public HttpResponse setSuccessful() {
+        this.wasSuccessful = true;
+        return this;
+    }
+
     public String getBody() {
         return body;
+    }
+
+    public HttpResponse setBody(String body) {
+        this.body = body;
+        return this;
     }
 
     public String getStatusMessage() {
         return statusMessage;
     }
 
+    public HttpResponse setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+        return this;
+    }
+
     public Integer getStatusCode() {
         return statusCode;
+    }
+
+    public HttpResponse setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
+        return this;
     }
 
     public Response getOriginalResponse() {
         return originalResponse;
     }
 
+    public HttpResponse setOriginalResponse(Response originalResponse) {
+        this.originalResponse = originalResponse;
+        return this;
+    }
+
     public Request getOriginalRequest() {
         return originalRequest;
+    }
+
+    public HttpResponse setOriginealRequest(Request originalRequest) {
+        this.originalRequest = originalRequest;
+        return this;
     }
 
     public String toString() {
