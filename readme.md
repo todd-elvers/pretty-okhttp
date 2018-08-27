@@ -68,6 +68,39 @@ class WebsiteHealthChecker implements HttpRequestHandling {
 }
 ```
 
+And the associated Spock test:
+
+```groovy
+class WebsiteHealthCheckerTest extends Specification {
+    
+    void "returns true if response is in the 200s, otherwise false"() {
+        given: 
+        def healthyWebsite = "healthy"
+        def non200Website = 'unhealthy-non200'
+        def websiteDown = 'unhealthy-down'
+        
+        and:
+        def websiteChecker = new WebsiteHealthChecker() {
+            @Override
+            HttpResponse executeGET(String url) throws Non200ResponseException, ServiceUnavailableException {
+                switch(url) {
+                    case healthyWebsite: return new HttpResponse()
+                    case non200Website : throw new Non200ResponseException("failed, non-200")
+                    case websiteDown   : throw new ServiceUnavailableException("failed, down", null) 
+                }
+            }
+        }
+        
+        expect:
+        websiteChecker.isWebsiteHealthy(healthyWebsite)
+        !websiteChecker.isWebsiteHealthy(non200Website)
+        !websiteChecker.isWebsiteHealthy(websiteDown)
+    }
+    
+}
+```
+
+
 <br/>
 
 ##### POST a form to a webservice:
