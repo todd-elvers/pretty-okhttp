@@ -24,11 +24,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class MultiFormatDateDeserializer implements JsonDeserializer<Date> {
 
     protected static final Predicate<String> IS_UNIX_EPOCH = Pattern.compile("[0-9]{9,}").asPredicate();
-    protected static final List<DateFormat> DATE_FORMATS = Arrays.asList(
-            new DateFormat("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
-            new DateFormat("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}"),
-            new DateFormat("MM-dd-yyyy", "[0-9]{2}-[0-9]{2}-[0-9]{4}")
-    );
 
     @Override
     public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -39,6 +34,17 @@ public class MultiFormatDateDeserializer implements JsonDeserializer<Date> {
         }
     }
 
+    /**
+     * @return the {@link DateFormat}s this class will attempt during deserialization
+     */
+    protected List<DateFormat> supportedDateFormats() {
+        return Arrays.asList(
+                new DateFormat("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
+                new DateFormat("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}"),
+                new DateFormat("MM-dd-yyyy", "[0-9]{2}-[0-9]{2}-[0-9]{4}")
+        );
+    }
+
     protected Date parseDate(String dateString) throws RuntimeException {
         if(isBlank(dateString)) return null;
         if(IS_UNIX_EPOCH.test(dateString)) {
@@ -47,11 +53,11 @@ public class MultiFormatDateDeserializer implements JsonDeserializer<Date> {
 
         return findDateParserFor(dateString)
                 .map(dateParser -> Try.of(() -> dateParser.parse(dateString)).getOrNull())
-                .orElseThrow(() -> new DateParsingException(dateString, DATE_FORMATS));
+                .orElseThrow(() -> new DateParsingException(dateString, supportedDateFormats()));
     }
 
     private Optional<FastDateFormat> findDateParserFor(String dateString) {
-        return DATE_FORMATS.stream()
+        return supportedDateFormats().stream()
                 .filter(dateFormat -> dateFormat.getRegex().test(dateString))
                 .map(DateFormat::getFormatter)
                 .findFirst();
