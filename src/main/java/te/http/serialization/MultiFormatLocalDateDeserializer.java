@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import io.vavr.control.Try;
 import te.http.exceptions.LocalDateParsingException;
+import te.http.serialization.domain.DateFormat;
 import te.http.serialization.domain.LocalDateFormat;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -25,11 +26,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class MultiFormatLocalDateDeserializer implements JsonDeserializer<LocalDate> {
 
     protected static final Predicate<String> IS_UNIX_EPOCH = Pattern.compile("[0-9]{9,}").asPredicate();
-    protected static final List<LocalDateFormat> LOCAL_DATE_FORMATS = Arrays.asList(
-            new LocalDateFormat("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
-            new LocalDateFormat("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}"),
-            new LocalDateFormat("MM-dd-yyyy", "[0-9]{2}-[0-9]{2}-[0-9]{4}")
-    );
 
     @Override
     public LocalDate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -40,6 +36,17 @@ public class MultiFormatLocalDateDeserializer implements JsonDeserializer<LocalD
         }
     }
 
+    /**
+     * @return the {@link LocalDateFormat}s this class will attempt during deserialization
+     */
+    protected List<LocalDateFormat> supportedDateFormats() {
+        return Arrays.asList(
+                new LocalDateFormat("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
+                new LocalDateFormat("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}"),
+                new LocalDateFormat("MM-dd-yyyy", "[0-9]{2}-[0-9]{2}-[0-9]{4}")
+        );
+    }
+
     protected LocalDate parseDate(String dateString) throws RuntimeException {
         if(isBlank(dateString)) return null;
         if(IS_UNIX_EPOCH.test(dateString)) {
@@ -48,11 +55,11 @@ public class MultiFormatLocalDateDeserializer implements JsonDeserializer<LocalD
 
         return findLocalDateParserFor(dateString)
                 .map(dateParser -> Try.of(() -> LocalDate.parse(dateString, dateParser)).getOrNull())
-                .orElseThrow(() -> new LocalDateParsingException(dateString, LOCAL_DATE_FORMATS));
+                .orElseThrow(() -> new LocalDateParsingException(dateString, supportedDateFormats()));
     }
 
     private Optional<DateTimeFormatter> findLocalDateParserFor(String dateString) {
-        return LOCAL_DATE_FORMATS.stream()
+        return supportedDateFormats().stream()
                 .filter(dateFormat -> dateFormat.matches(dateString))
                 .map(LocalDateFormat::getFormatter)
                 .findFirst();
