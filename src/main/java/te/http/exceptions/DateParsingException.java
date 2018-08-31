@@ -7,8 +7,10 @@ import te.http.serialization.domain.DateFormat;
 
 
 public class DateParsingException extends RuntimeException {
-    private static final String EXCEPTION_MESSAGE_SUFFIX = "To customize the deserialization behavior create your own implementation " +
-            "of MultiFormatDateDeserializer and register it instead (see JsonMarshalling for more details).";
+    private static final String EXCEPTION_MESSAGE_SUFFIX =
+            "To customize the deserialization behavior create your own implementation " +
+                    "of MultiFormatDateDeserializer and register it instead (see JsonMarshalling " +
+                    "for how to register a TypeAdapter for GSON).";
 
     public DateParsingException(String input, Collection<DateFormat> formatsTried) {
         super(
