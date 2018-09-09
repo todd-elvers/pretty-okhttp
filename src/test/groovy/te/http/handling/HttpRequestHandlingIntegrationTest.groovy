@@ -2,8 +2,8 @@ package te.http.handling
 
 import okhttp3.RequestBody
 import spock.lang.Specification
-import te.http.exceptions.Non200ResponseException
-import te.http.exceptions.ServiceUnavailableException
+import te.http.handling.exceptions.Non200ResponseException
+import te.http.handling.exceptions.ServiceUnavailableException
 
 class HttpRequestHandlingIntegrationTest extends Specification {
     def requestHandling = new HttpRequestHandling() {}

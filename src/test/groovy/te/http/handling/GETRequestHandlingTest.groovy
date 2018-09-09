@@ -3,7 +3,7 @@ package te.http.handling
 import okhttp3.Headers
 import okhttp3.Request
 import spock.lang.Specification
-import te.http.exceptions.Non200ResponseException
+import te.http.handling.exceptions.Non200ResponseException
 
 import static te.http.TestHelper.buildEmpty200ResponseFor
 

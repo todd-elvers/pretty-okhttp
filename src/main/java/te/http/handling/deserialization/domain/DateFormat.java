@@ -1,18 +1,17 @@
-package te.http.serialization.domain;
+package te.http.handling.deserialization.domain;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.util.Date;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import io.vavr.control.Try;
+
 /**
  * This represents a {@link java.util.Date} format we support deserialization from.
- *
- * More specifically this captures a pattern to convert {@link String}s to
- * {@link java.util.Date}s, a regex to identify if a given string matches the
- * pattern, and a formatter capable of parsing {@link String}s of that pattern.
  */
-public class DateFormat {
+public class DateFormat implements Format<Date> {
     private String pattern;
     private FastDateFormat formatter;
     private Predicate<String> regex;
@@ -23,8 +22,9 @@ public class DateFormat {
         this.regex = Pattern.compile(regexForPattern).asPredicate();
     }
 
-    public FastDateFormat getFormatter() {
-        return formatter;
+    @Override
+    public Date parse(String dateString) {
+        return Try.of(() -> formatter.parse(dateString)).get();
     }
 
     public String getPattern() {
@@ -35,7 +35,4 @@ public class DateFormat {
         return regex;
     }
 
-    public boolean matches(String dateString) {
-        return regex.test(dateString);
-    }
 }

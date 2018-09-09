@@ -5,8 +5,8 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import te.http.exceptions.Non200ResponseException;
-import te.http.exceptions.ServiceUnavailableException;
+import te.http.handling.exceptions.Non200ResponseException;
+import te.http.handling.exceptions.ServiceUnavailableException;
 
 /**
  * This Java 8 interface encapsulates what is required to make requests to webservices via OkHttp.
