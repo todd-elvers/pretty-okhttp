@@ -1,17 +1,16 @@
-package te.http.serialization.domain;
+package te.http.handling.deserialization.domain;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import io.vavr.control.Try;
+
 /**
  * This represents a {@link java.time.LocalDate} format we support deserialization from.
- *
- * More specifically this captures a pattern to convert {@link String}s to
- * {@link java.time.LocalDate}s, a regex to identify if a given string matches the
- * pattern, and a formatter capable of parsing {@link String}s of that pattern.
  */
-public class LocalDateFormat {
+public class LocalDateFormat  implements Format<LocalDate> {
     private String pattern;
     private DateTimeFormatter formatter;
     private Predicate<String> regex;
@@ -22,8 +21,9 @@ public class LocalDateFormat {
         this.regex = Pattern.compile(regexForPattern).asPredicate();
     }
 
-    public DateTimeFormatter getFormatter() {
-        return formatter;
+    @Override
+    public LocalDate parse(String dateString) {
+        return Try.of(() -> LocalDate.parse(dateString, formatter)).get();
     }
 
     public String getPattern() {

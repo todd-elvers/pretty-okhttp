@@ -9,8 +9,8 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import te.http.exceptions.Non200ResponseException;
-import te.http.exceptions.ServiceUnavailableException;
+import te.http.handling.exceptions.Non200ResponseException;
+import te.http.handling.exceptions.ServiceUnavailableException;
 
 public interface POSTRequestHandling {
 

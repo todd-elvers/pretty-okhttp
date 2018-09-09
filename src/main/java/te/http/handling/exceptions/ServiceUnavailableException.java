@@ -1,4 +1,4 @@
-package te.http.exceptions;
+package te.http.handling.exceptions;
 
 import java.io.IOException;
 

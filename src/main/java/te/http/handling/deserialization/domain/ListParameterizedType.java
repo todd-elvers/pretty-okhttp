@@ -1,4 +1,4 @@
-package te.http.serialization.domain;
+package te.http.handling.deserialization.domain;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 

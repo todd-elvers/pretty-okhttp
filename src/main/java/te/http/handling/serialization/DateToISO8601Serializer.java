@@ -1,4 +1,4 @@
-package te.http.serialization;
+package te.http.handling.serialization;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;

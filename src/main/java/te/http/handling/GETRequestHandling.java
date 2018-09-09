@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
-import te.http.exceptions.Non200ResponseException;
-import te.http.exceptions.ServiceUnavailableException;
+import te.http.handling.exceptions.Non200ResponseException;
+import te.http.handling.exceptions.ServiceUnavailableException;
 
 public interface GETRequestHandling {
 

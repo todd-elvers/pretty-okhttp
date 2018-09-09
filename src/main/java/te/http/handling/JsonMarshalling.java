@@ -8,15 +8,14 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
-import te.http.serialization.DateToISO8601Serializer;
-import te.http.serialization.LocalDateToISO8601Serializer;
-import te.http.serialization.MultiFormatDateDeserializer;
-import te.http.serialization.MultiFormatLocalDateDeserializer;
-import te.http.serialization.domain.ListParameterizedType;
+import te.http.handling.serialization.DateToISO8601Serializer;
+import te.http.handling.serialization.LocalDateToISO8601Serializer;
+import te.http.handling.deserialization.MultiFormatDateDeserializer;
+import te.http.handling.deserialization.MultiFormatLocalDateDeserializer;
+import te.http.handling.deserialization.domain.ListParameterizedType;
 
 /**
- * General interface for marshalling objects to/from JSON that comes with
- * built-in defaults to handle the general cases.
+ * General interface for marshalling objects to/from JSON that comes with built-in defaults to handle the general cases.
  */
 public interface JsonMarshalling {
 
