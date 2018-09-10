@@ -191,4 +191,4 @@ In your `build.gradle` file:
 * Under `repositories`
     * Add `maven { url "https://jitpack.io" }`, making sure it's the _last_ repo declared
 * Under `dependencies`
-    * Add `compile 'com.github.todd-elvers:pretty-okhttp:1.0.1'`
+    * Add `compile 'com.github.todd-elvers:pretty-okhttp:2.0.0'`
