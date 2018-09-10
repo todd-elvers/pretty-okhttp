@@ -6,6 +6,9 @@ import spock.lang.Shared
 import spock.lang.Specification
 import te.http.handling.JsonMarshalling
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+
 class JsonMarshallingTest extends Specification {
 
     @Shared
@@ -54,11 +57,23 @@ class JsonMarshallingTest extends Specification {
             results[1].age == 27
     }
 
+    def "can serialize/deserialize Date, LocalDate & LocalDateTime to/from JSON"() {
+        expect:
+            jsonMarshalling.fromJson(jsonMarshalling.toJson(new Dates()), Dates.class)
+    }
 
     static class Person {
         String firstName
         String lastName
+
         @SerializedName("years_old")
         int age
+    }
+
+    static class Dates {
+        Date javaDate = Date.parse("MM/dd/yyyy", "09/10/2018")
+        LocalDate localDate = LocalDate.parse("2018-09-10")
+        LocalDateTime localDateTime = LocalDateTime.parse("2018-09-10T00:00:01")
+        LocalDateTime localDateTimeEdgeCase = LocalDateTime.parse("2018-09-10T00:00:00")
     }
 }
