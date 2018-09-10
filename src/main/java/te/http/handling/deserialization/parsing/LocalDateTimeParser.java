@@ -21,10 +21,6 @@ public class LocalDateTimeParser implements DateParser<LocalDateTime> {
         this.regex = Pattern.compile(regexForPattern).asPredicate();
     }
 
-    public LocalDateTimeParser(String pattern, Predicate<String> regex, DateTimeFormatter formatter) {
-
-    }
-
     @Override
     public LocalDateTime parseDateString(String dateString) throws DateTimeParseException {
         return LocalDateTime.parse(dateString, formatter);

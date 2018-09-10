@@ -11,23 +11,23 @@ import java.time.ZoneId
 class LocalDateDeserializerTest extends Specification {
 
     @Subject
-    LocalDateDeserializer deserializer = []
+    LocalDateDeserializer dateDeserializer = []
 
     def date = LocalDate.parse("2017-01-02")
 
     def "can handle american dates w/ slashes"() {
         expect:
-            deserializer.parseDateString("01/02/2017") == date
+            dateDeserializer.parseDateString("01/02/2017") == date
     }
 
     def "can handle american dates w/ dashes"() {
         expect:
-            deserializer.parseDateString("01-02-2017") == date
+            dateDeserializer.parseDateString("01-02-2017") == date
     }
 
     def "can handle ISO 8601 dates"() {
         expect:
-            deserializer.parseDateString("2017-01-02") == date
+            dateDeserializer.parseDateString("2017-01-02") == date
     }
 
     def "can handle unix epoch dates"() {
@@ -35,7 +35,7 @@ class LocalDateDeserializerTest extends Specification {
             def expectedLocalDate = Instant.ofEpochMilli(Long.parseLong("1508507424")).atZone(ZoneId.systemDefault()).toLocalDate()
 
         expect:
-            deserializer.parseDateString("1508507424") == expectedLocalDate
+            dateDeserializer.parseDateString("1508507424") == expectedLocalDate
     }
 
 
@@ -44,7 +44,7 @@ class LocalDateDeserializerTest extends Specification {
             String dateString = "some-date-string"
 
         when:
-            deserializer.parseDateString(dateString)
+            dateDeserializer.parseDateString(dateString)
 
         then:
             def ex = thrown(DateTimeDeserializationException)

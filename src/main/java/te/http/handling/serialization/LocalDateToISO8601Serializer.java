@@ -12,7 +12,9 @@ public class LocalDateToISO8601Serializer implements JsonSerializer<LocalDate> {
 
     @Override
     public JsonElement serialize(LocalDate src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(src.toString());
+        return new JsonPrimitive(
+                src.toString()
+        );
     }
 
 }

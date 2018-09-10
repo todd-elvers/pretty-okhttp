@@ -3,9 +3,9 @@ package te.http.handling.serialization
 import com.google.gson.JsonPrimitive
 import spock.lang.Specification
 
-class DateToISO8601SerializerTest extends Specification {
+class JavaDateToISO8601SerializerTest extends Specification {
 
-    DateToISO8601Serializer dateSerializer = []
+    JavaDateToISO8601Serializer dateSerializer = []
 
     def "formats a date in ISO8601 and wraps it in a JsonPrimitives"() {
         given:
