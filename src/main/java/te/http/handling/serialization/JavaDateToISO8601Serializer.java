@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DATE_FORMAT;
 
-public class DateToISO8601Serializer implements JsonSerializer<Date> {
+public class JavaDateToISO8601Serializer implements JsonSerializer<Date> {
 
     @Override
     public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {

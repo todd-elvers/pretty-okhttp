@@ -13,12 +13,17 @@ import te.http.handling.deserialization.ListParameterizedType;
 import te.http.handling.deserialization.JavaDateDeserializer;
 import te.http.handling.deserialization.LocalDateDeserializer;
 import te.http.handling.deserialization.LocalDateTimeDeserializer;
-import te.http.handling.serialization.DateToISO8601Serializer;
+import te.http.handling.serialization.JavaDateToISO8601Serializer;
 import te.http.handling.serialization.LocalDateTimeToISO8601Serializer;
 import te.http.handling.serialization.LocalDateToISO8601Serializer;
 
 /**
- * General interface for marshalling objects to/from JSON that comes with built-in defaults to handle the general cases.
+ * Simple JSON marshalling interface for serialization/deserialization via Google's
+ * {@link Gson} library.  Also comes with sensible date handling defaults that
+ * can be easily overridden.
+ *
+ * <p>The default behavior is to add {@link Date}, {@link LocalDate}, and {@link LocalDateTime}
+ * serialization & deserialization handling to {@link Gson} during initialization.
  */
 public interface JsonMarshalling {
 
@@ -41,7 +46,7 @@ public interface JsonMarshalling {
 
     interface Defaults {
         Gson jsonMarshaller = new GsonBuilder()
-                .registerTypeAdapter(Date.class, new DateToISO8601Serializer())
+                .registerTypeAdapter(Date.class, new JavaDateToISO8601Serializer())
                 .registerTypeAdapter(Date.class, new JavaDateDeserializer())
                 .registerTypeAdapter(LocalDate.class, new LocalDateToISO8601Serializer())
                 .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())

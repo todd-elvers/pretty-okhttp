@@ -1,10 +1,10 @@
 package te.http.handling
 
-import com.google.gson.Gson
+
 import com.google.gson.annotations.SerializedName
+import groovy.transform.EqualsAndHashCode
 import spock.lang.Shared
 import spock.lang.Specification
-import te.http.handling.JsonMarshalling
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -57,9 +57,22 @@ class JsonMarshallingTest extends Specification {
             results[1].age == 27
     }
 
-    def "can serialize/deserialize Date, LocalDate & LocalDateTime to/from JSON"() {
-        expect:
-            jsonMarshalling.fromJson(jsonMarshalling.toJson(new Dates()), Dates.class)
+    def "can serialize/deserialize Date, LocalDate, and LocalDateTime to/from JSON"() {
+        given:
+            ObjectWithDates original = new ObjectWithDates()
+            String originalJSON = jsonMarshalling.toJson(original)
+
+        when:
+            ObjectWithDates recreated = jsonMarshalling.fromJson(
+                    originalJSON,
+                    ObjectWithDates.class
+            )
+
+        then:
+            noExceptionThrown()
+
+        and:
+            original == recreated
     }
 
     static class Person {
@@ -70,7 +83,8 @@ class JsonMarshallingTest extends Specification {
         int age
     }
 
-    static class Dates {
+    @EqualsAndHashCode
+    static class ObjectWithDates {
         Date javaDate = Date.parse("MM/dd/yyyy", "09/10/2018")
         LocalDate localDate = LocalDate.parse("2018-09-10")
         LocalDateTime localDateTime = LocalDateTime.parse("2018-09-10T00:00:01")

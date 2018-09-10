@@ -6,10 +6,11 @@ import io.vavr.control.Try;
 import te.http.handling.exceptions.ParserConfigurationException;
 
 /**
- * Represents a date format we support for converting strings to instances of type T.
+ * Parses a date from a string returning an instance of type T.
  *
  * @see JavaDateParser
  * @see LocalDateParser
+ * @see LocalDateTimeParser
  */
 public interface DateParser<T> {
 
