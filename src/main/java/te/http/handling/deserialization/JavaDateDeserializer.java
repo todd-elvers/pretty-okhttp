@@ -10,11 +10,6 @@ import te.http.handling.deserialization.parsing.JavaDateParser;
 public class JavaDateDeserializer implements MultiFormatDateDeserializer<Date> {
 
     @Override
-    public Class<Date> getTargetClass() {
-        return Date.class;
-    }
-
-    @Override
     public List<DateParser<Date>> supportedFormats() {
         return Arrays.asList(
                 new JavaDateParser("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
@@ -26,6 +21,11 @@ public class JavaDateDeserializer implements MultiFormatDateDeserializer<Date> {
     @Override
     public Date fromUnixEpoch(long epoch) {
         return new Date(epoch);
+    }
+
+    @Override
+    public Class<Date> getTargetClass() {
+        return Date.class;
     }
 
 
