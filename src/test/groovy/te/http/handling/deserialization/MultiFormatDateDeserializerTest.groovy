@@ -1,49 +1,47 @@
 package te.http.handling.deserialization
 
+import com.google.gson.JsonParseException
+import com.google.gson.JsonPrimitive
 import spock.lang.Specification
-import te.http.handling.exceptions.DateParsingException
-import te.http.handling.exceptions.LocalDateParsingException
+import spock.lang.Subject
+import te.http.handling.deserialization.parsing.DateParser
+import te.http.handling.deserialization.parsing.JavaDateParser
+
+import java.time.DateTimeException
 
 class MultiFormatDateDeserializerTest extends Specification {
 
-    MultiFormatDateDeserializer dateDeserializer = []
+    @Subject
+    def deserializerImpl = new MultiFormatDateDeserializer<Date>() {
+        @Override
+        Class<Date> getTargetClass() {
+            return Date.class
+        }
 
-    def date = Date.parse("MM/dd/yyyy", "01/02/2017")
+        @Override
+        List<DateParser> supportedFormats() {
+            return [
+                    new JavaDateParser("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}")
+            ]
+        }
 
-    def "can handle american dates w/ slashes"() {
-        expect:
-            dateDeserializer.parseDateString("01/02/2017") == date
+        @Override
+        Date fromUnixEpoch(long epoch) {
+            return new Date(epoch)
+        }
     }
 
-    def "can handle american dates w/ dashes"() {
-        expect:
-            dateDeserializer.parseDateString("01-02-2017") == date
-    }
-
-    def "can handle ISO 8601 dates"() {
-        expect:
-            dateDeserializer.parseDateString("2017-01-02") == date
-    }
-
-    def "can handle Unix Epoch dates"() {
-        expect:
-            dateDeserializer.parseDateString("1508507424") == new Date(1508507424L)
-    }
-
-    def "throws DateParsingException with the correct message if date cannot be handled"() {
+    def "exceptions during deserialize() bubble up and are wrapped in a JsonParseException"() {
         given:
-            String dateString = "some-date-string"
+            def dateStringWrongFormat = "01-02-1234"
+            def jsonElement = new JsonPrimitive(dateStringWrongFormat)
 
         when:
-            dateDeserializer.parseDateString(dateString)
+            deserializerImpl.deserialize(jsonElement, null, null)
 
         then:
-            def ex = thrown(DateParsingException)
-            ex.message.startsWith("Date")
-            ex.message.contains(dateString)
-            ex.message.contains('yyyy-MM-dd')
-            ex.message.contains('MM/dd/yyyy')
-            ex.message.contains('MM-dd-yyyy')
-            ex.message.contains('MultiFormatDateDeserializer')
+            def ex = thrown(JsonParseException)
+            ex.cause instanceof DateTimeException
     }
+
 }

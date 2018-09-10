@@ -1,29 +1,28 @@
-package te.http.handling.deserialization.domain;
+package te.http.handling.deserialization.parsing;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
-
-import io.vavr.control.Try;
 
 /**
  * This represents a {@link java.time.LocalDate} format we support deserialization from.
  */
-public class LocalDateFormat  implements Format<LocalDate> {
+public class LocalDateParser implements DateParser<LocalDate> {
     private String pattern;
-    private DateTimeFormatter formatter;
     private Predicate<String> regex;
+    private DateTimeFormatter formatter;
 
-    public LocalDateFormat(String pattern, String regexForPattern) {
+    public LocalDateParser(String pattern, String regexForPattern) {
         this.pattern = pattern;
         this.formatter = DateTimeFormatter.ofPattern(pattern);
         this.regex = Pattern.compile(regexForPattern).asPredicate();
     }
 
     @Override
-    public LocalDate parse(String dateString) {
-        return Try.of(() -> LocalDate.parse(dateString, formatter)).get();
+    public LocalDate parseDateString(String dateString) throws DateTimeParseException {
+        return LocalDate.parse(dateString, formatter);
     }
 
     public String getPattern() {
@@ -34,7 +33,4 @@ public class LocalDateFormat  implements Format<LocalDate> {
         return regex;
     }
 
-    public boolean matches(String dateString) {
-        return regex.test(dateString);
-    }
 }
