@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import te.http.handling.deserialization.parsing.DateParser;
@@ -17,11 +18,6 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
 import static java.util.Collections.singletonList;
 
 public class LocalDateTimeDeserializer implements MultiFormatDateDeserializer<LocalDateTime> {
-
-    @Override
-    public Class<LocalDateTime> getTargetClass() {
-        return LocalDateTime.class;
-    }
 
     @Override
     public List<DateParser<LocalDateTime>> supportedFormats() {
@@ -38,6 +34,11 @@ public class LocalDateTimeDeserializer implements MultiFormatDateDeserializer<Lo
         return Instant.ofEpochMilli(epoch)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
+    }
+
+    @Override
+    public Class<LocalDateTime> getTargetClass() {
+        return LocalDateTime.class;
     }
 
 }

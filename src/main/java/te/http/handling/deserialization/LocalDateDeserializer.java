@@ -12,11 +12,6 @@ import te.http.handling.deserialization.parsing.LocalDateParser;
 public class LocalDateDeserializer implements MultiFormatDateDeserializer<LocalDate> {
 
     @Override
-    public Class<LocalDate> getTargetClass() {
-        return LocalDate.class;
-    }
-
-    @Override
     public List<DateParser<LocalDate>> supportedFormats() {
         return Arrays.asList(
                 new LocalDateParser("yyyy-MM-dd", "[0-9]{4}-[0-9]{2}-[0-9]{2}"),
@@ -30,6 +25,11 @@ public class LocalDateDeserializer implements MultiFormatDateDeserializer<LocalD
         return Instant.ofEpochMilli(epoch)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
+    }
+
+    @Override
+    public Class<LocalDate> getTargetClass() {
+        return LocalDate.class;
     }
 
 

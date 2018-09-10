@@ -3,7 +3,7 @@ pretty-okhttp
 
 Combines the powers of [OkHttp](http://square.github.io/okhttp/), 
 [Java 8 interfaces](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html),
-and Google's [GSON](https://github.com/google/gson) to create a thread-safe, simple, 
+and Google's [GSON](https://github.com/google/gson) to create a thread-safe,  
 easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 
@@ -12,31 +12,13 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 ## How to use it
 
-* Add `implements HttpRequestHandling` to your class declaration 
-* If necessary customize any of the default behavior (headers, etc.) 
-* Call the relevant `executeGET`, `executePOST`, or `executeFormPOST` method
-    * If you need more customized behavior you can build the `Request` object yourself
-    and then call `executeRequest` with it.
-* You'll get one of the following back:
-    * An `HttpResponse` object with the response of the HTTP request
-    * A `Non200ResponseException` if the response returned a non-200 value
-    * A `ServiceUnavailableException` if the request failed completely
-
-That's it!
-
-#### Finer details
-* The `HttpResponse` also contains the `Request` that was used to get it
-* The `Non200ResponseException` class contains the `HttpResponse` from the webservice so we 
-can inspect the request & response further if necessary
-* The `ServiceUnavailableException` class contains the exception that was thrown and the
-`Request` that failed
-* The default object serialization logic for `Date` or `LocalDate` is to use ISO-8601
-    * This means that the time information is lost here, so if you require the time to be preserved you'll
-    either have to use the linux epoch in the JSON or register your own type adapter to the GSON instance
-    in `JsonMarshalling`.
-* The default object deserialization logic for `Date` or `LocalDate` is to try multiple different formats
-    * See `MultiFormatDateDeserializer` or `MultiFormatLocalDateDeserializer` for details
-
+1. Implement `HttpRequestHandling` in your class 
+    * Customize any of the default behavior if necessary (`getDefaultHeader()`, etc.) 
+2. Make a request to your desired endpoint 
+    * For GET requests = `executeGET`
+    * For POST requests = `executePOST`, or `executeFormPOST`
+3. Optionally marshall the resulting JSON into an object or list of objects
+    * Marshalling JSON = `toJson`, `fromJson`, or `fromJsonList`
 
 <br/>
 
@@ -48,7 +30,7 @@ traditional Java implementation and then also the vavr equivalent.
 
 <br/>
 
-##### Performing a health check on a url:
+#### Performing a health check on a url:
 
 ```java
 class WebsiteHealthChecker implements HttpRequestHandling {
@@ -73,33 +55,26 @@ class WebsiteHealthChecker implements HttpRequestHandling {
 }
 ```
 
-And the associated Spock test:
+And an associated, yet completely bogus, Spock test illustrating how testing works:
 
 ```groovy
 class WebsiteHealthCheckerTest extends Specification {
     
-    void "returns true if response is in the 200s, otherwise false"() {
-        given: 
-        def healthyWebsite = "healthy"
-        def non200Website = 'unhealthy-non200'
-        def websiteDown = 'unhealthy-down'
-        
-        and:
+    void "rollback database if service returns a non-200"() {
+        given:
         def websiteChecker = new WebsiteHealthChecker() {
             @Override
-            HttpResponse executeGET(String url) throws Non200ResponseException, ServiceUnavailableException {
-                switch(url) {
-                    case healthyWebsite: return new HttpResponse()
-                    case non200Website : throw new Non200ResponseException("failed, non-200")
-                    case websiteDown   : throw new ServiceUnavailableException("failed, down", null) 
-                }
-            }
+            HttpResponse executeGET(String url) {
+                throw new Non200ResponseException("failed, non-200")
+            }   
         }
         
-        expect:
-        websiteChecker.isWebsiteHealthy(healthyWebsite)
-        !websiteChecker.isWebsiteHealthy(non200Website)
-        !websiteChecker.isWebsiteHealthy(websiteDown)
+        when:
+        websiteChecker.isWebsiteHealthy("some-url")
+        
+        then:
+        thrown(Non200ResponseException)
+        ...
     }
     
 }
@@ -108,7 +83,7 @@ class WebsiteHealthCheckerTest extends Specification {
 
 <br/>
 
-##### POST a form to a webservice:
+#### POST a form to a webservice:
 
 ```java
 class FormUploader implements HttpRequestHandling {
@@ -136,7 +111,7 @@ class FormUploader implements HttpRequestHandling {
 
 <br/>
 
-##### Making a authenticated request to a webservice & marshalling the response:
+#### Making a authenticated request to a webservice & marshalling the resulting JSON into an object:
 
 ```java
 class UserRetriever implements HttpRequestHandling {
@@ -185,8 +160,28 @@ class UserRetriever implements HttpRequestHandling {
 
 
 #### Marshalling JSON to a list
-Due to Java's type-erasure we have to use `fromJsonList(json, SomeObject.class)` if the 
-JSON we have is a list of objects.
+Due to Java's type-erasure we have to use `fromJsonList(json, YourObject.class)` if the 
+JSON we have is a list of objects instead of an object itself.
+
+<br/>
+
+## Defaults
+
+#### Headers
+* `Accept` = `application/json` 
+* `Content-Type` = `application/json`
+
+Override `getDefaultHeaders()` to change this.
+
+#### OkHttp
+* The default OkHttp configuration is used
+
+Override `getHttpClient()` to change this.
+
+#### Gson
+* Serialization & de-serialization support added for `Date`, `LocalDate`, and `LocalDateTime`
+
+Override `getJsonMarshaller()` to change this.
 
 <br/>
 
