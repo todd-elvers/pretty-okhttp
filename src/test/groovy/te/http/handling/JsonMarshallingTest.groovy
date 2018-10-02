@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName
 import groovy.transform.EqualsAndHashCode
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -12,6 +13,7 @@ import java.time.LocalDateTime
 class JsonMarshallingTest extends Specification {
 
     @Shared
+    @Subject
     JsonMarshalling jsonMarshalling = new JsonMarshalling() {}
 
     def "can serialize an object into JSON"() {

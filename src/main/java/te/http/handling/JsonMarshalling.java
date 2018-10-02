@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
-import te.http.handling.deserialization.ListParameterizedType;
 import te.http.handling.deserialization.JavaDateDeserializer;
+import te.http.handling.deserialization.ListParameterizedType;
 import te.http.handling.deserialization.LocalDateDeserializer;
 import te.http.handling.deserialization.LocalDateTimeDeserializer;
 import te.http.handling.serialization.JavaDateToISO8601Serializer;

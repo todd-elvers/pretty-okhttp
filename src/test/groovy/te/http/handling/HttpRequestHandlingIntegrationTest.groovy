@@ -1,11 +1,16 @@
 package te.http.handling
 
 import okhttp3.RequestBody
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 import te.http.handling.exceptions.Non200ResponseException
 import te.http.handling.exceptions.ServiceUnavailableException
 
 class HttpRequestHandlingIntegrationTest extends Specification {
+
+    @Shared
+    @Subject
     def requestHandling = new HttpRequestHandling() {}
 
     def "when a service returns a 200 we build & return an HttpResponse"() {

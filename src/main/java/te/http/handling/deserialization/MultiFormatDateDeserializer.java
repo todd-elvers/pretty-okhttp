@@ -7,9 +7,9 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 
 import java.lang.reflect.Type;
-import java.util.List;
 import java.util.regex.Pattern;
 
+import io.vavr.collection.List;
 import io.vavr.control.Try;
 import te.http.handling.deserialization.parsing.DateParser;
 import te.http.handling.exceptions.DateTimeDeserializationException;
@@ -24,10 +24,19 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 public interface MultiFormatDateDeserializer<T> extends JsonDeserializer<T> {
 
+    /**
+     * @return the object this class generates during deserialization
+     */
     Class<T> getTargetClass();
 
+    /**
+     * @return the formats this class supports for deserialization
+     */
     List<DateParser<T>> supportedFormats();
 
+    /**
+     * @return a new instance of type T built from the Unix Epoch
+     */
     T fromUnixEpoch(long epoch);
 
     default T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -43,17 +52,15 @@ public interface MultiFormatDateDeserializer<T> extends JsonDeserializer<T> {
         if (isUnixEpoch(dateString)) return fromUnixEpoch(parseLong(dateString));
 
         return supportedFormats()
-                .stream()
-                .filter(dateFormat -> dateFormat.matches(dateString))
-                .findFirst()
+                .find(dateFormat -> dateFormat.matches(dateString))
                 .map(dateFormat ->  dateFormat.parse(dateString))
-                .orElseThrow(() -> onFailure(dateString, supportedFormats()));
+                .getOrElseThrow(() -> onFailure(dateString, supportedFormats()));
     }
 
     default DateTimeDeserializationException onFailure(String dateString, List<DateParser<T>> formatsAttempted) {
         return new DateTimeDeserializationException(
                 dateString,
-                formatsAttempted.stream().map(DateParser::getPattern).collect(joining(", ")),
+                formatsAttempted.map(DateParser::getPattern).collect(joining(", ")),
                 getTargetClass()
         );
     }

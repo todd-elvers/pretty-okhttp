@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 class HttpResponseTest extends Specification {
 
-    def "has a no-arg constructor"() {
+    def "has a no-arg constructor and a fluent interface"() {
         expect:
             new HttpResponse()
                     .setBody("{}")

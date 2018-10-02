@@ -21,6 +21,7 @@ public class HttpResponse implements HttpRequestHandling {
     private Response originalResponse;
     private Request originalRequest;
 
+    // Convenience constructor to simplify testing
     public HttpResponse() {}
 
     public HttpResponse(Response okHttpResponse) {

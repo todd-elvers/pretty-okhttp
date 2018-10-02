@@ -1,10 +1,14 @@
 package te.http.handling.serialization
 
 import com.google.gson.JsonPrimitive
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 
 class JavaDateToISO8601SerializerTest extends Specification {
 
+    @Shared
+    @Subject
     JavaDateToISO8601Serializer dateSerializer = []
 
     def "formats a date in ISO8601 and wraps it in a JsonPrimitives"() {
