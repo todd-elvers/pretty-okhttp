@@ -1,12 +1,13 @@
 package te.http.handling.deserialization
 
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-
 import te.http.handling.exceptions.DateTimeDeserializationException
 
 class JavaDateDeserializerTest extends Specification {
 
+    @Shared
     @Subject
     JavaDateDeserializer dateDeserializer = []
 

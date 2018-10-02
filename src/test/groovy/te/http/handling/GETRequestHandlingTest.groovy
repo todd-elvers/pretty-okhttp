@@ -2,13 +2,17 @@ package te.http.handling
 
 import okhttp3.Headers
 import okhttp3.Request
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 import te.http.handling.exceptions.Non200ResponseException
 
 import static te.http.TestHelper.buildEmpty200ResponseFor
 
 class GETRequestHandlingTest extends Specification {
 
+    @Shared
+    @Subject
     def requestHandling = new GETRequestHandling() {
         @Override
         HttpResponse executeRequest(Request request) throws Non200ResponseException {

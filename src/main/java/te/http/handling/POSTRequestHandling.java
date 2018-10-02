@@ -18,7 +18,8 @@ public interface POSTRequestHandling {
     HttpResponse executeRequest(Request request) throws Non200ResponseException, ServiceUnavailableException;
 
     /**
-     * URL encodes the provided form data and then POSTs it w/ the application/x-www-form-urlencoded" Content-Type header set.
+     * URL encodes the provided form data and then POSTs it w/ the application/x-www-form-urlencoded"
+     * Content-Type header set.
      */
     default HttpResponse executeFormPOST(String url, Map<String, ?> formData) throws Non200ResponseException, ServiceUnavailableException {
         FormBody formBody = urlEncodeAsFormData(formData);
@@ -30,7 +31,8 @@ public interface POSTRequestHandling {
     /**
      * Performs a generic POST request using the provided content-type & default headers.
      *
-     * @apiNote This does not handle "application/x-www-form-urlencoded" content, use {@link #executeFormPOST(String, Map)} for that.
+     * @apiNote This does not handle "application/x-www-form-urlencoded" content, use {@link
+     * #executeFormPOST(String, Map)} for that.
      */
     default HttpResponse executePOST(String url, MediaType contentType, String content) throws Non200ResponseException, ServiceUnavailableException {
         RequestBody requestBody = RequestBody.create(contentType, content.getBytes());
@@ -52,7 +54,12 @@ public interface POSTRequestHandling {
 
         urlParams.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> Objects.toString(entry.getValue(), "")))
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> Objects.toString(entry.getValue(), "")
+                        )
+                )
                 .forEach(formBodyBuilder::add);
 
         return formBodyBuilder.build();

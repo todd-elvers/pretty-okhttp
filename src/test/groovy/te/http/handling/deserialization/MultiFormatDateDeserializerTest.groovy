@@ -2,6 +2,8 @@ package te.http.handling.deserialization
 
 import com.google.gson.JsonParseException
 import com.google.gson.JsonPrimitive
+import io.vavr.collection.List
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 import te.http.handling.deserialization.parsing.DateParser
@@ -11,6 +13,7 @@ import java.time.DateTimeException
 
 class MultiFormatDateDeserializerTest extends Specification {
 
+    @Shared
     @Subject
     def deserializerImpl = new MultiFormatDateDeserializer<Date>() {
         @Override
@@ -20,9 +23,9 @@ class MultiFormatDateDeserializerTest extends Specification {
 
         @Override
         List<DateParser> supportedFormats() {
-            return [
+            return List.of(
                     new JavaDateParser("MM/dd/yyyy", "[0-9]{2}/[0-9]{2}/[0-9]{4}")
-            ]
+            )
         }
 
         @Override

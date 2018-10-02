@@ -2,6 +2,8 @@ package te.http.handling.deserialization.parsing;
 
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.text.ParseException;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -21,8 +23,14 @@ public class JavaDateParser implements DateParser<Date> {
     }
 
     @Override
-    public Date parseDateString(String dateString) throws Exception {
-        return formatter.parse(dateString);
+    public Date parseDateString(String dateString) throws DateTimeParseException {
+        try {
+            return formatter.parse(dateString);
+        } catch (ParseException exception) {
+            throw new DateTimeParseException(
+                    exception.getMessage(), dateString, exception.getErrorOffset()
+            );
+        }
     }
 
     public String getPattern() {

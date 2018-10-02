@@ -15,8 +15,8 @@ import te.http.handling.exceptions.ServiceUnavailableException;
 
 public interface GETRequestHandling {
 
-    HttpResponse executeRequest(Request request) throws Non200ResponseException, ServiceUnavailableException;
     Headers getDefaultHeaders();
+    HttpResponse executeRequest(Request request) throws Non200ResponseException, ServiceUnavailableException;
 
     /**
      * Performs a generic GET request using the default headers.
@@ -26,7 +26,8 @@ public interface GETRequestHandling {
     }
 
     /**
-     * URL encodes the provided parameters then performs a generic GET request using the default headers.
+     * URL encodes the provided parameters then performs a generic GET request using the default
+     * headers.
      */
     default HttpResponse executeGET(String url, Map<String, ?> urlParams) throws Non200ResponseException, ServiceUnavailableException {
         return executeRequest(buildRequestForGET(url, urlParams));
@@ -44,12 +45,18 @@ public interface GETRequestHandling {
 
     default String addQueryParamsToURL(String url, @Nonnull Map<String, ?> urlParams) {
         HttpUrl parsedUrl = HttpUrl.parse(url);
-        if (parsedUrl == null) throw new RuntimeException("Could not parse " + url + " - URL appears to be malformed.");
+        if (parsedUrl == null)
+            throw new RuntimeException("Could not parse " + url + " - URL appears to be malformed.");
 
         HttpUrl.Builder urlBuilder = parsedUrl.newBuilder();
         urlParams.entrySet()
                 .stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> Objects.toString(entry.getValue(), "")))
+                .collect(
+                        Collectors.toMap(
+                                Map.Entry::getKey,
+                                entry -> Objects.toString(entry.getValue(), "")
+                        )
+                )
                 .forEach(urlBuilder::addQueryParameter);
 
         return urlBuilder.build().toString();

@@ -5,7 +5,9 @@ import okhttp3.FormBody
 import okhttp3.Headers
 import okhttp3.Request
 import okhttp3.RequestBody
+import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Subject
 import te.http.handling.exceptions.Non200ResponseException
 
 import static te.http.TestHelper.buildEmpty200ResponseFor
@@ -13,6 +15,8 @@ import static te.http.TestHelper.buildEmpty200ResponseFor
 @Slf4j
 class POSTRequestHandlingTest extends Specification {
 
+    @Shared
+    @Subject
     def requestHandling = new POSTRequestHandling() {
         @Override
         HttpResponse executeRequest(Request request) throws Non200ResponseException {
@@ -44,7 +48,6 @@ class POSTRequestHandlingTest extends Specification {
             responseOfFormPOST.statusMessage
             responseOfFormPOST.originalRequest.url().toString() == url
             responseOfFormPOST.body == "{}"
-
     }
 
 

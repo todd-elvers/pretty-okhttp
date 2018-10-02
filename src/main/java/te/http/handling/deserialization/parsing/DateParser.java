@@ -1,5 +1,6 @@
 package te.http.handling.deserialization.parsing;
 
+import java.time.format.DateTimeParseException;
 import java.util.function.Predicate;
 
 import io.vavr.control.Try;
@@ -17,7 +18,7 @@ public interface DateParser<T> {
     /**
      * @return a new instance of type T or an exception if that failed
      */
-    T parseDateString(String dateString) throws Exception;
+    T parseDateString(String dateString) throws DateTimeParseException;
 
     /**
      * @return the date pattern we are trying to parse out of strings

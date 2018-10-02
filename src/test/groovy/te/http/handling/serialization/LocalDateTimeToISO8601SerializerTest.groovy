@@ -1,6 +1,7 @@
 package te.http.handling.serialization
 
 import com.google.gson.JsonPrimitive
+import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime
 
 class LocalDateTimeToISO8601SerializerTest extends Specification {
 
+    @Shared
     @Subject
     LocalDateTimeToISO8601Serializer dateSerializer = []
 
