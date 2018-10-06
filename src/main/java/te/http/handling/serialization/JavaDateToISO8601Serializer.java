@@ -12,13 +12,11 @@ import static org.apache.commons.lang3.time.DateFormatUtils.ISO_8601_EXTENDED_DA
 
 public class JavaDateToISO8601Serializer implements JsonSerializer<Date> {
 
-    //TODO: Is the Date here ever null?  I don't think it can be...
-
     @Override
     public JsonElement serialize(Date src, Type typeOfSrc, JsonSerializationContext context) {
-        return new JsonPrimitive(ISO_8601_EXTENDED_DATE_FORMAT.format(src));
-//                (src == null) ? "" :
-//        );
+        return new JsonPrimitive(
+                ISO_8601_EXTENDED_DATE_FORMAT.format(src)
+        );
     }
 
 }

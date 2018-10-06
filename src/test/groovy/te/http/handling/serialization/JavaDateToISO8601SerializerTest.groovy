@@ -17,7 +17,7 @@ class JavaDateToISO8601SerializerTest extends Specification {
             def output = new JsonPrimitive("2017-01-02")
 
         expect:
-             dateSerializer.serialize(input, null, null) == output
+            dateSerializer.serialize(input, null, null) == output
     }
 
 }

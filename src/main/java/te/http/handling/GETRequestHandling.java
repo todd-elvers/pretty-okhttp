@@ -45,8 +45,9 @@ public interface GETRequestHandling {
 
     default String addQueryParamsToURL(String url, @Nonnull Map<String, ?> urlParams) {
         HttpUrl parsedUrl = HttpUrl.parse(url);
-        if (parsedUrl == null)
+        if (parsedUrl == null) {
             throw new RuntimeException("Could not parse " + url + " - URL appears to be malformed.");
+        }
 
         HttpUrl.Builder urlBuilder = parsedUrl.newBuilder();
         urlParams.entrySet()

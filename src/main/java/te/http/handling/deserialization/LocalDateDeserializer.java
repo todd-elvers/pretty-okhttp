@@ -27,10 +27,4 @@ public class LocalDateDeserializer implements MultiFormatDateDeserializer<LocalD
                 .toLocalDate();
     }
 
-    @Override
-    public Class<LocalDate> getTargetClass() {
-        return LocalDate.class;
-    }
-
-
 }

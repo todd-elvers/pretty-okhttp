@@ -15,22 +15,22 @@ class JavaDateDeserializerTest extends Specification {
 
     def "can handle american dates w/ slashes"() {
         expect:
-            dateDeserializer.parseDateString("01/02/2017") == date
+            dateDeserializer.parseDateString("01/02/2017", Date) == date
     }
 
     def "can handle american dates w/ dashes"() {
         expect:
-            dateDeserializer.parseDateString("01-02-2017") == date
+            dateDeserializer.parseDateString("01-02-2017", Date) == date
     }
 
     def "can handle ISO 8601 dates"() {
         expect:
-            dateDeserializer.parseDateString("2017-01-02") == date
+            dateDeserializer.parseDateString("2017-01-02", Date) == date
     }
 
     def "can handle Unix Epoch dates"() {
         expect:
-            dateDeserializer.parseDateString("1508507424") == new Date(1508507424L)
+            dateDeserializer.parseDateString("1508507424", Date) == new Date(1508507424L)
     }
 
     def "throws DateTimeDeserializationException with the correct message if date cannot be handled"() {
@@ -38,11 +38,11 @@ class JavaDateDeserializerTest extends Specification {
             String dateString = "some-date-string"
 
         when:
-            dateDeserializer.parseDateString(dateString)
+            dateDeserializer.parseDateString(dateString, Date)
 
         then:
             def ex = thrown(DateTimeDeserializationException)
-            ex.message.startsWith("Date")
+            ex.message.startsWith(Date.name)
             ex.message.contains(dateString)
             ex.message.contains('yyyy-MM-dd')
             ex.message.contains('MM/dd/yyyy')

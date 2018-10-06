@@ -1,6 +1,6 @@
 package te.http.handling.deserialization
 
-import com.google.gson.JsonParseException
+
 import com.google.gson.JsonPrimitive
 import io.vavr.collection.List
 import spock.lang.Shared
@@ -8,19 +8,16 @@ import spock.lang.Specification
 import spock.lang.Subject
 import te.http.handling.deserialization.parsing.DateParser
 import te.http.handling.deserialization.parsing.JavaDateParser
+import te.http.handling.exceptions.DateTimeDeserializationException
 
-import java.time.DateTimeException
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class MultiFormatDateDeserializerTest extends Specification {
 
     @Shared
     @Subject
     def deserializerImpl = new MultiFormatDateDeserializer<Date>() {
-        @Override
-        Class<Date> getTargetClass() {
-            return Date.class
-        }
-
         @Override
         List<DateParser> supportedFormats() {
             return List.of(
@@ -40,11 +37,14 @@ class MultiFormatDateDeserializerTest extends Specification {
             def jsonElement = new JsonPrimitive(dateStringWrongFormat)
 
         when:
-            deserializerImpl.deserialize(jsonElement, null, null)
+            deserializerImpl.deserialize(jsonElement, targetClass, null)
 
         then:
-            def ex = thrown(JsonParseException)
-            ex.cause instanceof DateTimeException
+            def ex = thrown(DateTimeDeserializationException)
+            ex.message.contains("${targetClass.getSimpleName()} deserialization failed for '01-02-1234'.  Tried Unix Epoch and the following formats: [MM/dd/yyyy].")
+
+        where:
+            targetClass << [Date, LocalDate, LocalDateTime]
     }
 
 }
