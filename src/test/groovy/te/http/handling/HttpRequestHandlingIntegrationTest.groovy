@@ -23,7 +23,6 @@ class HttpRequestHandlingIntegrationTest extends Specification {
 
         then: 'we return the response wrapped in our HttpResponse object'
             httpResponse
-            println(httpResponse)
             httpResponse.wasSuccessful
             httpResponse.statusCode == 200
             !httpResponse.body.isEmpty()
