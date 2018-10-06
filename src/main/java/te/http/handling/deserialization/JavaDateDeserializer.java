@@ -22,10 +22,4 @@ public class JavaDateDeserializer implements MultiFormatDateDeserializer<Date> {
         return new Date(epoch);
     }
 
-    @Override
-    public Class<Date> getTargetClass() {
-        return Date.class;
-    }
-
-
 }

@@ -28,7 +28,9 @@ public class JavaDateParser implements DateParser<Date> {
             return formatter.parse(dateString);
         } catch (ParseException exception) {
             throw new DateTimeParseException(
-                    exception.getMessage(), dateString, exception.getErrorOffset()
+                    exception.getMessage(),
+                    dateString,
+                    exception.getErrorOffset()
             );
         }
     }

@@ -1,19 +1,26 @@
 package te.http.handling.exceptions;
 
 
+import java.lang.reflect.Type;
 import java.time.DateTimeException;
+
+import io.vavr.collection.List;
+import te.http.handling.deserialization.parsing.DateParser;
+
+import static java.util.stream.Collectors.joining;
 
 public class DateTimeDeserializationException extends DateTimeException {
 
-    public DateTimeDeserializationException(String input, String formatsTried, Class<?> targetClass) {
+    public <T> DateTimeDeserializationException(String input, Type targetClass, List<DateParser<T>> formatsTried) {
         super(
                 String.format(
-                        "%s deserialization failed for [%s].  " +
+                        "%s deserialization failed for '%s'.  " +
                                 "Tried Unix Epoch and the following formats: [%s].",
-                        targetClass.getSimpleName(),
+                        targetClass.getTypeName(),
                         input,
-                        formatsTried
+                        formatsTried.map(DateParser::getPattern).collect(joining(", "))
                 )
         );
     }
+
 }

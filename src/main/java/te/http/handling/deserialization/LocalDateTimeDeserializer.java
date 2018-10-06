@@ -28,9 +28,4 @@ public class LocalDateTimeDeserializer implements MultiFormatDateDeserializer<Lo
                 .toLocalDateTime();
     }
 
-    @Override
-    public Class<LocalDateTime> getTargetClass() {
-        return LocalDateTime.class;
-    }
-
 }

@@ -6,8 +6,8 @@ import okhttp3.Request;
 
 public class ServiceUnavailableException extends IOException {
 
-    public Request request;
-    public Throwable rootCause;
+    private Request request;
+    private Throwable rootCause;
 
     public ServiceUnavailableException(String message, Throwable ex) {
         super(message, ex);
@@ -23,4 +23,11 @@ public class ServiceUnavailableException extends IOException {
         this.rootCause = exception;
     }
 
+    public Request getRequest() {
+        return request;
+    }
+
+    public Throwable getRootCause() {
+        return rootCause;
+    }
 }

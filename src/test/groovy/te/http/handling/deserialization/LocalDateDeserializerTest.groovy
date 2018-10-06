@@ -19,17 +19,17 @@ class LocalDateDeserializerTest extends Specification {
 
     def "can handle american dates w/ slashes"() {
         expect:
-            dateDeserializer.parseDateString("01/02/2017") == date
+            dateDeserializer.parseDateString("01/02/2017", LocalDate) == date
     }
 
     def "can handle american dates w/ dashes"() {
         expect:
-            dateDeserializer.parseDateString("01-02-2017") == date
+            dateDeserializer.parseDateString("01-02-2017", LocalDate) == date
     }
 
     def "can handle ISO 8601 dates"() {
         expect:
-            dateDeserializer.parseDateString("2017-01-02") == date
+            dateDeserializer.parseDateString("2017-01-02", LocalDate) == date
     }
 
     def "can handle unix epoch dates"() {
@@ -37,20 +37,19 @@ class LocalDateDeserializerTest extends Specification {
             def expectedLocalDate = Instant.ofEpochMilli(Long.parseLong("1508507424")).atZone(ZoneId.systemDefault()).toLocalDate()
 
         expect:
-            dateDeserializer.parseDateString("1508507424") == expectedLocalDate
+            dateDeserializer.parseDateString("1508507424", LocalDate) == expectedLocalDate
     }
-
 
     def "throws LocalDateParsingException with the correct message if date cannot be handled"() {
         given:
             String dateString = "some-date-string"
 
         when:
-            dateDeserializer.parseDateString(dateString)
+            dateDeserializer.parseDateString(dateString, LocalDate)
 
         then:
             def ex = thrown(DateTimeDeserializationException)
-            ex.message.startsWith("LocalDate")
+            ex.message.startsWith(LocalDate.name)
             ex.message.contains(dateString)
             ex.message.contains('yyyy-MM-dd')
             ex.message.contains('MM/dd/yyyy')
