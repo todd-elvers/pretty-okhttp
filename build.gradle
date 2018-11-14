@@ -23,10 +23,12 @@ dependencies {
 
 apply from: 'attach-sources.gradle'
 
-// Allows us to see all console output from Gradle for tests 
-test {
+// Specify `-PshowLogs` or `-PshowOutput` when running Gradle tests to pipe output to the console
+test { 
     testLogging {
-        showStandardStreams = true
-        exceptionFormat = 'full'
+        if(project.hasProperty('showLogs') || project.hasProperty('showOutput')) {
+            showStandardStreams = true
+            exceptionFormat = 'full'
+        }
     }
 }
