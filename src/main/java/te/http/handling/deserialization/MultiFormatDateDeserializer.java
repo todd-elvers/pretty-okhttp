@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import io.vavr.collection.List;
 import io.vavr.control.Try;
 import te.http.handling.deserialization.parsing.DateParser;
-import te.http.handling.exceptions.DateTimeDeserializationException;
+import te.http.handling.error.exceptions.DateTimeDeserializationException;
 
 import static java.lang.Long.parseLong;
 import static org.apache.commons.lang3.StringUtils.isBlank;

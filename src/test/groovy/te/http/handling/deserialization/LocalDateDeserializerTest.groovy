@@ -3,7 +3,7 @@ package te.http.handling.deserialization
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.exceptions.DateTimeDeserializationException
+import te.http.handling.error.exceptions.DateTimeDeserializationException
 
 import java.time.Instant
 import java.time.LocalDate

@@ -8,7 +8,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import te.http.handling.deserialization.parsing.DateParser
 import te.http.handling.deserialization.parsing.JavaDateParser
-import te.http.handling.exceptions.DateTimeDeserializationException
+import te.http.handling.error.exceptions.DateTimeDeserializationException
 
 import java.time.LocalDate
 import java.time.LocalDateTime

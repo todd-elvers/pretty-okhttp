@@ -5,7 +5,7 @@ import okhttp3.Request
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.exceptions.Non200ResponseException
+import te.http.handling.error.exceptions.Non200ResponseException
 
 import static te.http.TestHelper.buildEmpty200ResponseFor
 
