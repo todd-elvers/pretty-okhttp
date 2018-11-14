@@ -58,7 +58,7 @@ public class ServiceUnavailableException extends IOException {
      * matches {@link #READ_TIMEOUT_TEXT}.
      */
     public boolean wasReadTimeout() {
-        if (rootCause instanceof SocketTimeoutException) {
+        if (rootCause instanceof SocketTimeoutException && rootCause.getCause() != null) {
             return Optional.of(getRootCause().getCause())
                     .filter(cause -> cause instanceof SocketTimeoutException)
                     .map(Throwable::fillInStackTrace)
