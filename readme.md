@@ -48,8 +48,8 @@ class WebsiteHealthChecker implements HttpRequestHandling {
     // Vavr implementation
     public boolean isWebsiteHealthy(String url) {
         return Try.of(() -> executeGET(url))
-                        .toJavaOptional()
-                        .isPresent();
+                .toJavaOptional()
+                .isPresent();
     }
     
 }
