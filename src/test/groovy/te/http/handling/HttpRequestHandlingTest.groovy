@@ -5,6 +5,7 @@ import okhttp3.RequestBody
 import org.apache.commons.lang3.RandomUtils
 import org.junit.Rule
 import org.mockserver.junit.MockServerRule
+import org.mockserver.model.HttpStatusCode
 import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
@@ -134,5 +135,37 @@ class HttpRequestHandlingTest extends Specification {
 
         and: 'we did not detect a connect timeout'
             exception.wasReadTimeout()
+    }
+
+    def "500s that contain error messages & payloads are correctly parsed"() {
+        given:
+            webServer.getClient()
+                    .when(request().withPath(uri))
+                    .respond(
+                        response()
+                            .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code())
+                            .withReasonPhrase(HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase())
+                            .withBody("payload")
+                    )
+
+        when:
+            requestHandling.executeGET(url)
+
+        then:
+            def exception = thrown(Non200ResponseException)
+
+        and: 'correctly parsed the response'
+            exception.httpResponse.statusMessage == HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase()
+            exception.httpResponse.body == "payload"
+
+        and: 'the exception message was as detailed as possible'
+            exception.message == """\
+                Request returned non-200!
+                \tURL = $url
+                \tCode = 500
+                \tMessage = ${exception.httpResponse.statusMessage}
+                \tBody = payload
+            """.stripIndent()
+
     }
 }
