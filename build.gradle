@@ -13,11 +13,12 @@ dependencies {
     compile 'com.google.code.findbugs:jsr305:3.0.2' // @Nullable and other annotations
     compile 'org.apache.commons:commons-lang3:3.8'  // Nice-to-have utility functions
 
-    testCompile 'ch.qos.logback:logback-classic:1.2.3'      // Logger implementation for tests
-
-    testCompile 'cglib:cglib-nodep:3.2.7'                       // Spock testing framework
-    testCompile 'org.objenesis:objenesis:2.6'                   // Spock testing framework
-    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'  // Spock testing framework
+    testCompile 'ch.qos.logback:logback-classic:1.2.3'          // Logger implementation for tests
+    testCompile 'org.mock-server:mockserver-netty:5.4.1'        // Mock Web Server
+    testCompile 'org.mock-server:mockserver-client-java:5.4.1'  // Mock Web Client
+    testCompile 'cglib:cglib-nodep:3.2.9'                       // Spock testing framework
+    testCompile 'org.objenesis:objenesis:3.0.1'                 // Spock testing framework
+    testCompile 'org.spockframework:spock-core:1.2-groovy-2.4'  // Spock testing framework
 }
 
 apply from: 'attach-sources.gradle'
