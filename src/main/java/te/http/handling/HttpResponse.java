@@ -6,28 +6,29 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 /**
- * Wrapper around OkHttp's {@link Response} object and the {@link Request} object
- * that was used to retrieve it.
+ * Wrapper around OkHttp's {@link Response} object that eagerly fetches the response
+ * body and closes the buffer, ensuring no memory leaks occur.
  *
- * Also abstracts away the fact that OkHttp's {@link Response} object only allows
- * you to read a response once by caching it in this object upon instantiation.
+ * The eager fetching of the response body also abstracts away the fact that OkHttp's
+ * {@link Response} object only allows you to read a response once.  No more checking
+ * if the buffer has already been read!
  */
-public class HttpResponse implements HttpRequestHandling {
+public class HttpResponse {
 
     private boolean wasSuccessful;
     private String body;
     private String statusMessage;
     private Integer statusCode;
-    private Response originalResponse;
-    private Request originalRequest;
+    private Response wrappedResponse;
+    private Request request;
 
     // Convenience constructor to simplify testing
     public HttpResponse() {}
 
     public HttpResponse(Response okHttpResponse) {
         this.wasSuccessful = okHttpResponse.isSuccessful();
-        this.originalResponse = okHttpResponse;
-        this.originalRequest = okHttpResponse.request();
+        this.wrappedResponse = okHttpResponse;
+        this.request = okHttpResponse.request();
         this.statusCode = okHttpResponse.code();
         this.statusMessage = okHttpResponse.message();
         this.body = Try.of(okHttpResponse::body).mapTry(ResponseBody::string).getOrNull();
@@ -73,21 +74,21 @@ public class HttpResponse implements HttpRequestHandling {
         return this;
     }
 
-    public Response getOriginalResponse() {
-        return originalResponse;
+    public Response getWrappedResponse() {
+        return wrappedResponse;
     }
 
-    public HttpResponse setOriginalResponse(Response originalResponse) {
-        this.originalResponse = originalResponse;
+    public HttpResponse setWrappedResponse(Response wrappedResponse) {
+        this.wrappedResponse = wrappedResponse;
         return this;
     }
 
-    public Request getOriginalRequest() {
-        return originalRequest;
+    public Request getRequest() {
+        return request;
     }
 
-    public HttpResponse setOriginalRequest(Request originalRequest) {
-        this.originalRequest = originalRequest;
+    public HttpResponse setRequest(Request request) {
+        this.request = request;
         return this;
     }
 

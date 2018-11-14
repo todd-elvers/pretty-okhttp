@@ -21,7 +21,7 @@ public class Non200ResponseException extends IOException {
                                 "\n\tMessage = %s" +
                                 "\n\tBody = %s" +
                                 "\n",
-                        httpResponse.getOriginalRequest().url().toString(),
+                        httpResponse.getRequest().url().toString(),
                         httpResponse.getStatusCode(),
                         httpResponse.getStatusMessage(),
                         httpResponse.getBody()
