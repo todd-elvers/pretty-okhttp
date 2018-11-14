@@ -4,7 +4,7 @@ import java.time.format.DateTimeParseException;
 import java.util.function.Predicate;
 
 import io.vavr.control.Try;
-import te.http.handling.exceptions.ParserConfigurationException;
+import te.http.handling.error.exceptions.ParserConfigurationException;
 
 /**
  * Parses a date from a string returning an instance of type T.

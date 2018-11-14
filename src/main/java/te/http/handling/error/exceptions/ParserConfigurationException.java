@@ -1,4 +1,4 @@
-package te.http.handling.exceptions;
+package te.http.handling.error.exceptions;
 
 public class ParserConfigurationException extends RuntimeException {
 

@@ -1,5 +1,6 @@
 package te.http.handling
 
+
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import org.apache.commons.lang3.RandomUtils
@@ -10,8 +11,8 @@ import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.exceptions.Non200ResponseException
-import te.http.handling.exceptions.ServiceUnavailableException
+import te.http.handling.error.exceptions.Non200ResponseException
+import te.http.handling.error.exceptions.ServiceUnavailableException
 
 import java.util.concurrent.TimeUnit
 
@@ -162,8 +163,9 @@ class HttpRequestHandlingTest extends Specification {
             exception.message == """\
                 Request returned non-200!
                 \tURL = $url
+                \tMethod = GET
                 \tCode = 500
-                \tMessage = ${exception.httpResponse.statusMessage}
+                \tMessage = $exception.httpResponse.statusMessage
                 \tBody = payload
             """.stripIndent()
 
