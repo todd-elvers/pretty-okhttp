@@ -86,7 +86,7 @@ public class HttpResponse implements HttpRequestHandling {
         return originalRequest;
     }
 
-    public HttpResponse setOriginealRequest(Request originalRequest) {
+    public HttpResponse setOriginalRequest(Request originalRequest) {
         this.originalRequest = originalRequest;
         return this;
     }
