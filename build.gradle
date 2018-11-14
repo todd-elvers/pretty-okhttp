@@ -22,3 +22,11 @@ dependencies {
 }
 
 apply from: 'attach-sources.gradle'
+
+// Allows us to see all console output from Gradle for tests 
+test {
+    testLogging {
+        showStandardStreams = true
+        exceptionFormat = 'full'
+    }
+}
