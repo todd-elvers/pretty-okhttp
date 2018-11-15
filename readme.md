@@ -17,7 +17,7 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 2. Make a request to your desired endpoint 
     * For GET requests = `executeGET`
     * For POST requests = `executePOST`, or `executeFormPOST`
-3. Optionally marshall the resulting JSON into an object or list of objects
+3. You're done! Optionally you could marshall the resulting JSON into an object or list of objects
     * Marshalling JSON = `toJson`, `fromJson`, or `fromJsonList`
 
 <br/>
@@ -136,7 +136,7 @@ class UserRetriever implements HttpRequestHandling {
     }
     
     // Traditional implementation
-    public Optional<String> retrieve(String url) {
+    public Optional<User> retrieve(String url) {
         User user = null;
 
         try {
@@ -154,14 +154,15 @@ class UserRetriever implements HttpRequestHandling {
     }
     
     // Vavr implementation
-    public User retrieve(String url) {
+    public Optional<User> retrieve(String url) {
         return Try.of(() -> executeGET(url))
                 .mapTry(httpResponse -> fromJson(httpResponse.getBodyOrNull(), User.class))
                 .recoverWith(r -> Match(r).of(
                      Case($(instanceOf(HttpClientException.class)), handle400),
                      Case($(instanceOf(HttpServerException.class)), handle500),
                      Case($(instanceOf(NoResponseException.class)), handleNetworkError)
-                )).get();
+                ))
+                .toJavaOptional();
     }
     
     
