@@ -3,17 +3,57 @@ pretty-okhttp
 
 Combines the powers of [OkHttp](http://square.github.io/okhttp/), 
 [Java 8 interfaces](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html),
-and Google's [GSON](https://github.com/google/gson) to create a thread-safe,  
+and Google's [Gson](https://github.com/google/gson) to create a thread-safe,  
 easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 
 <br/>
 
+## Why not just use the libraries directly?
+
+### OkHttp
+
+[OkHttp](http://square.github.io/okhttp/) is a great, thread-safe library for handling HTTP requests, 
+but it requires a lot of boilerplate
+
+##### Making it better:
+Implement OkHttp behind a Java 8 interface, which simultaneously requires 
+no configuration while also allowing for a high degree of customization.
+
+
+### Gson
+
+[Gson](https://github.com/google/gson) is a great library for object serialization to/from JSON, 
+but does not support date/time serialization out-of-the-box.
+
+##### Making it better:
+Serialization was added for Java's Date, LocalDate, and LocalDateTime classes to the Gson instance
+that is available after implementing `HttpRequestHandling` (or just simply `JsonMarshalling`). 
+
+###### Serialization:
+During serialization the above date/time classes are sent over the wire as as 
+[ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) strings. See the classes in 
+[this package](https://github.com/todd-elvers/pretty-okhttp/tree/master/src/main/java/te/http/handling/serialization) 
+for more details. To override this behavior entirely override the `getJsonMarshaller()`
+method. 
+
+###### Deserialization:
+During de-serialization Gson will try the Unix epoch, the ISO-8601 format, and 
+then a few other common formats (e.g. "MM/dd/yyyy", etc.).  See the classes in 
+[this package](https://github.com/todd-elvers/pretty-okhttp/tree/master/src/main/java/te/http/handling/deserialization) 
+for more details. To override this behavior entirely override the `getJsonMarshaller()`
+method.
+
+So the **tl;dr** here is that we cover some general cases the original libraries
+do not cover, simplify use of those libraries, and then alter some of the behavior
+of those libraries.  OkHttp was just ok, this is pretty-ok. 
+
+<br/>
 
 ## How to use it
 
-1. Implement `HttpRequestHandling` in your class 
-    * Customize any of the default behavior if necessary (`getDefaultHeader()`, etc.) 
+1. Make your class implement `HttpRequestHandling`
+    * Override any of the default behavior if necessary (e.g. `getDefaultHeader()`, etc.) 
 2. Make a request to your desired endpoint 
     * For GET requests = `executeGET`
     * For POST requests = `executePOST`, or `executeFormPOST`
