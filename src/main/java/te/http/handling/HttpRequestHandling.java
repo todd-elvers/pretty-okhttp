@@ -6,8 +6,9 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import te.http.handling.error.exceptions.Non200ResponseException;
-import te.http.handling.error.exceptions.ServiceUnavailableException;
+import te.http.handling.error.exceptions.HttpClientException;
+import te.http.handling.error.exceptions.HttpServerException;
+import te.http.handling.error.exceptions.NoResponseException;
 
 /**
  * This Java 8 interface encapsulates what is required to make requests to webservices via OkHttp.
@@ -44,29 +45,50 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
      * and {@link POSTRequestHandling} instead of calling this directly.
      *
      * @param request the {@link Request} to execute
-     * @return a {@link HttpResponse} containing the {@link Response} and the {@link Request} that
-     * generated it.
-     * @throws ServiceUnavailableException if and only if the webservice never responds; this
-     *                                     exception contains the {@link Request} that caused it.
-     * @throws Non200ResponseException     if and only if the webservice responses with a non-200;
-     *                                     when thrown this exception will contain an {@link
-     *                                     HttpResponse}, which will contain a reference to the
-     *                                     associated {@link Request} & {@link Response} to simplify
-     *                                     accessing the response body, checking headers, etc.
+     * @return a {@link HttpResponse} wrapping the {@link Response} and optionally a response body.
+     * @throws NoResponseException if no response is ever received from the webservice; if this was
+     *                             due to a connect timeout then {@link NoResponseException#isConnectTimeout()}
+     *                             will return true; if this was due to a read timeout then  {@link
+     *                             NoResponseException#isReadTimeout()} will return true.
+     * @throws HttpServerException if the webservice returned a 500 level status code; this will
+     *                             have a reference to the corresponding {@link HttpResponse}
+     *                             object.
+     * @throws HttpClientException if the webservice returned a 400 level status code; this will
+     *                             have a reference to the corresponding {@link HttpResponse}
+     *                             object.
      */
-    default HttpResponse executeRequest(Request request) throws ServiceUnavailableException, Non200ResponseException {
+    default HttpResponse executeRequest(Request request) throws HttpServerException, HttpClientException, NoResponseException {
         HttpResponse response = Try
                 .withResources(() -> getHttpClient().newCall(request).execute())
                 .of(HttpResponse::new)
-                .getOrElseThrow((exception) -> new ServiceUnavailableException(exception, request));
+                .getOrElseThrow((exception) -> new NoResponseException(exception, request));
 
-        if (response.wasNotSuccessful()) {
-            throw new Non200ResponseException(response);
+        if (response.isNotSuccessful()) {
+            return handleNon200Response(response);
         }
 
         return response;
     }
 
+    /**
+     * Defines the behavior for when a response has a non-200 level status code (400, 500, etc.).
+     *
+     * <p>By default, 400 level status codes throw {@link HttpClientException}s and 500
+     * level status codes throw {@link HttpServerException}s.
+     */
+    default HttpResponse handleNon200Response(HttpResponse response) throws HttpClientException, HttpServerException {
+        int statusCode = response.getStatusCode();
+
+        if (statusCode >= 400 && statusCode < 500) {
+            throw new HttpClientException(response);
+        }
+
+        if (statusCode >= 500) {
+            throw new HttpServerException(response);
+        }
+
+        return response;
+    }
 
     interface Defaults {
         MediaType applicationJSON = MediaType.parse("application/json");

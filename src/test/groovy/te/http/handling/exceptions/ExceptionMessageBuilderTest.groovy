@@ -31,7 +31,7 @@ class ExceptionMessageBuilderTest extends Specification {
             exceptionMessageBuilder.timeoutDetector.isReadTimeout(_) >> isReadTimeout
 
         and:
-            def message = exceptionMessageBuilder.buildServiceUnavailableMessage(
+            def message = exceptionMessageBuilder.buildNoResponseMessage(
                     new Exception(),
                     request
             )

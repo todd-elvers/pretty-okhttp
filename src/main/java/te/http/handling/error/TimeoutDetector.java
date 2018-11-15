@@ -3,6 +3,9 @@ package te.http.handling.error;
 import java.net.SocketTimeoutException;
 import java.util.Optional;
 
+/**
+ * Tool for distinguishing between socket connect timeouts and socket read timeouts.
+ */
 public class TimeoutDetector {
     private static final String READ_TIMEOUT_TEXT = "Read timed out";
     private static final String CONNECT_TIMEOUT_TEXT = "connect timed out";

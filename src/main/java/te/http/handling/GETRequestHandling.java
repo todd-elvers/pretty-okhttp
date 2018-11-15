@@ -10,18 +10,19 @@ import javax.annotation.Nullable;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
-import te.http.handling.error.exceptions.Non200ResponseException;
-import te.http.handling.error.exceptions.ServiceUnavailableException;
+import te.http.handling.error.exceptions.HttpClientException;
+import te.http.handling.error.exceptions.HttpServerException;
+import te.http.handling.error.exceptions.NoResponseException;
 
 public interface GETRequestHandling {
 
     Headers getDefaultHeaders();
-    HttpResponse executeRequest(Request request) throws Non200ResponseException, ServiceUnavailableException;
+    HttpResponse executeRequest(Request request) throws HttpClientException, HttpServerException, NoResponseException;
 
     /**
      * Performs a generic GET request using the default headers.
      */
-    default HttpResponse executeGET(String url) throws Non200ResponseException, ServiceUnavailableException {
+    default HttpResponse executeGET(String url) throws HttpClientException, HttpServerException, NoResponseException {
         return executeGET(url, null);
     }
 
@@ -29,7 +30,7 @@ public interface GETRequestHandling {
      * URL encodes the provided parameters then performs a generic GET request using the default
      * headers.
      */
-    default HttpResponse executeGET(String url, Map<String, ?> urlParams) throws Non200ResponseException, ServiceUnavailableException {
+    default HttpResponse executeGET(String url, Map<String, ?> urlParams) throws HttpClientException, HttpServerException, NoResponseException {
         return executeRequest(buildRequestForGET(url, urlParams));
     }
 

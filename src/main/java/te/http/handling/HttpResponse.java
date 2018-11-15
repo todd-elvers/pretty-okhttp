@@ -1,5 +1,7 @@
 package te.http.handling;
 
+import javax.annotation.Nullable;
+
 import io.vavr.control.Try;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -9,16 +11,16 @@ import okhttp3.ResponseBody;
  * Wrapper around OkHttp's {@link Response} object that eagerly fetches the response
  * body and closes the buffer, ensuring no memory leaks occur.
  *
- * The eager fetching of the response body also abstracts away the fact that OkHttp's
- * {@link Response} object only allows you to read a response once.  No more checking
- * if the buffer has already been read!
+ * Since OkHttp's {@link Response} only allows one read of the response body, and since we
+ * read it during instantiation, to fetch the response body yourself use {@link #body} and
+ * <b>not</b> {@link Response#body()}.
  */
 public class HttpResponse {
 
-    private boolean wasSuccessful;
-    private String body;
+    private boolean isSuccessful;
+    private @Nullable String body;
     private String statusMessage;
-    private Integer statusCode;
+    private int statusCode;
     private Response wrappedResponse;
     private Request request;
 
@@ -26,7 +28,7 @@ public class HttpResponse {
     public HttpResponse() {}
 
     public HttpResponse(Response okHttpResponse) {
-        this.wasSuccessful = okHttpResponse.isSuccessful();
+        this.isSuccessful = okHttpResponse.isSuccessful();
         this.wrappedResponse = okHttpResponse;
         this.request = okHttpResponse.request();
         this.statusCode = okHttpResponse.code();
@@ -34,19 +36,20 @@ public class HttpResponse {
         this.body = Try.of(okHttpResponse::body).mapTry(ResponseBody::string).getOrNull();
     }
 
-    public boolean wasSuccessful() {
-        return wasSuccessful;
+    public boolean isSuccessful() {
+        return isSuccessful;
     }
 
-    public boolean wasNotSuccessful() {
-        return !wasSuccessful;
+    public boolean isNotSuccessful() {
+        return !isSuccessful;
     }
 
     public HttpResponse setSuccessful() {
-        this.wasSuccessful = true;
+        this.isSuccessful = true;
         return this;
     }
 
+    @Nullable
     public String getBody() {
         return body;
     }
@@ -65,11 +68,11 @@ public class HttpResponse {
         return this;
     }
 
-    public Integer getStatusCode() {
+    public int getStatusCode() {
         return statusCode;
     }
 
-    public HttpResponse setStatusCode(Integer statusCode) {
+    public HttpResponse setStatusCode(int statusCode) {
         this.statusCode = statusCode;
         return this;
     }

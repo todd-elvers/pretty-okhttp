@@ -5,16 +5,18 @@ import java.io.IOException;
 import te.http.handling.HttpResponse;
 import te.http.handling.error.ExceptionMessageBuilder;
 
-//TODO: Rename this to HttpClientException
-public class Non200ResponseException extends IOException {
+/**
+ * Represents a response that returned a 400-level status code
+ */
+public class HttpClientException extends IOException {
 
     private HttpResponse httpResponse;
 
-    public Non200ResponseException(String message) {
+    public HttpClientException(String message) {
         super(message);
     }
 
-    public Non200ResponseException(HttpResponse httpResponse) {
+    public HttpClientException(HttpResponse httpResponse) {
         //TODO: How can we test this?
         this(new ExceptionMessageBuilder().buildNon200ResponseMessage(httpResponse));
 
