@@ -7,6 +7,9 @@ import okhttp3.Request;
 import te.http.handling.error.ExceptionMessageBuilder;
 import te.http.handling.error.TimeoutDetector;
 
+/**
+ * Occurs when we get no response from a requested resource.
+ */
 public class NoResponseException extends IOException {
 
     private TimeoutDetector timeoutDetector = new TimeoutDetector();

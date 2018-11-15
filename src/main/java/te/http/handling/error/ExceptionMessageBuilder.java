@@ -30,18 +30,17 @@ public class ExceptionMessageBuilder {
 
     public String buildNon200ResponseMessage(HttpResponse httpResponse) {
         return String.format(
-                "Request returned non-200!" +
+                "Request returned %d!" +
                         "\n\tURL = %s" +
                         "\n\tMethod = %s" +
-                        "\n\tCode = %d" +
                         "\n\tMessage = %s" +
                         "\n\tBody = %s" +
                         "\n",
+                httpResponse.getStatusCode(),
                 httpResponse.getRequest().url().toString(),
                 httpResponse.getRequest().method(),
-                httpResponse.getStatusCode(),
                 httpResponse.getStatusMessage(),
-                httpResponse.getBody()
+                httpResponse.getBody().orElse(null)
         );
     }
 

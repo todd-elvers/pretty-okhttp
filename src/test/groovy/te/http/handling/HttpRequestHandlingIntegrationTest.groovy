@@ -62,7 +62,7 @@ class HttpRequestHandlingIntegrationTest extends Specification {
             httpResponse
             httpResponse.isSuccessful()
             httpResponse.statusCode == 200
-            httpResponse.getBody() == json
+            httpResponse.getBody().get() == json
             !httpResponse.statusMessage.isEmpty()
     }
 
@@ -106,14 +106,13 @@ class HttpRequestHandlingIntegrationTest extends Specification {
 
         and: 'correctly parsed the response'
             exception.httpResponse.statusMessage == HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase()
-            exception.httpResponse.body == "payload"
+            exception.httpResponse.body.get() == "payload"
 
         and: 'the exception message was as detailed as possible'
             exception.message == """\
-                Request returned non-200!
+                Request returned 500!
                 \tURL = $url
                 \tMethod = GET
-                \tCode = 500
                 \tMessage = $exception.httpResponse.statusMessage
                 \tBody = payload
             """.stripIndent()
