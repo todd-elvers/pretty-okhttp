@@ -75,10 +75,9 @@ class ExceptionMessageBuilderTest extends Specification {
 
         then:
             message == """\
-            Request returned non-200!
+            Request returned 404!
             \tURL = https://www.google.com/
             \tMethod = GET
-            \tCode = 404
             \tMessage = Not Found
             \tBody = payload
             """.stripIndent()

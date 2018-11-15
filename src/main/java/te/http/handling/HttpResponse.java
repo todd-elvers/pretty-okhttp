@@ -1,5 +1,9 @@
 package te.http.handling;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.Optional;
+
 import javax.annotation.Nullable;
 
 import io.vavr.control.Try;
@@ -49,9 +53,16 @@ public class HttpResponse {
         return this;
     }
 
-    @Nullable
-    public String getBody() {
-        return body;
+    public Optional<String> getBody() {
+        return Optional.ofNullable(body);
+    }
+
+    public String getBodyOrNull() {
+        return Optional.ofNullable(body).orElse(null);
+    }
+
+    public String getBodyOrDefault(String defaultString) {
+        return Optional.ofNullable(body).orElse(defaultString);
     }
 
     public HttpResponse setBody(String body) {
@@ -95,15 +106,15 @@ public class HttpResponse {
         return this;
     }
 
+    @Override
     public String toString() {
-        return String.format(
-                "%s.%s(statusCode: %d, statusMessage: %s, body: %s)",
-                this.getClass().getPackage().getName(),
-                this.getClass().getSimpleName(),
-                statusCode,
-                statusMessage,
-                body
-        );
+        return new ToStringBuilder(this)
+                .append("isSuccessful", isSuccessful)
+                .append("body", body)
+                .append("statusMessage", statusMessage)
+                .append("statusCode", statusCode)
+                .append("wrappedResponse", wrappedResponse)
+                .append("request", request)
+                .toString();
     }
-
 }
