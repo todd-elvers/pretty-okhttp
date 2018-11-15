@@ -7,7 +7,7 @@ public class ExceptionMessageBuilder {
 
     private TimeoutDetector timeoutDetector = new TimeoutDetector();
 
-    public String buildServiceUnavailableMessage(Throwable throwable, Request request) {
+    public String buildNoResponseMessage(Throwable throwable, Request request) {
         String errorMessageHeader = "Service is unavailable or unresponsive!";
         String requestedURL = request.url().toString();
 

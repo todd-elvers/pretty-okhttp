@@ -11,8 +11,9 @@ import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.error.exceptions.Non200ResponseException
-import te.http.handling.error.exceptions.ServiceUnavailableException
+import te.http.handling.error.exceptions.HttpClientException
+import te.http.handling.error.exceptions.HttpServerException
+import te.http.handling.error.exceptions.NoResponseException
 
 import java.util.concurrent.TimeUnit
 
@@ -20,7 +21,7 @@ import static org.mockserver.model.HttpRequest.request
 import static org.mockserver.model.HttpResponse.notFoundResponse
 import static org.mockserver.model.HttpResponse.response
 
-class HttpRequestHandlingTest extends Specification {
+class HttpRequestHandlingIntegrationTest extends Specification {
 
     @Rule
     MockServerRule webServer = new MockServerRule(this)
@@ -59,13 +60,13 @@ class HttpRequestHandlingTest extends Specification {
 
         then: 'we return the response wrapped in our HttpResponse object'
             httpResponse
-            httpResponse.wasSuccessful()
+            httpResponse.isSuccessful()
             httpResponse.statusCode == 200
             httpResponse.getBody() == json
             !httpResponse.statusMessage.isEmpty()
     }
 
-    def "when a service returns a non-200 then a Non200ResponseException is thrown"() {
+    def "when a service returns a 400 then a HttpClientException is thrown"() {
         given: 'a web server that always returns 404'
             webServer.getClient()
                     .when(request().withPath(uri))
@@ -80,80 +81,28 @@ class HttpRequestHandlingTest extends Specification {
         when: 'we execute the POST'
             requestHandling.executeRequest(request)
 
-        then: 'a non-200 exception is thrown that contains the real status code'
-            def ex = thrown(Non200ResponseException)
+        then: 'a HttpClientException is thrown that contains the real status code'
+            def ex = thrown(HttpClientException)
             ex.httpResponse.statusCode == 404
             ex.httpResponse.statusMessage == "Not Found"
     }
 
-    def "when a service does not respond then a ServiceUnavailableException is thrown"() {
-        given: 'a request to POST to URL that does not exist'
-            def url = "https://www.someurlthatprobablydoesnotexistkappakappaboingboing.com"
-            def request = requestHandling.buildRequestForPOST(
-                    url,
-                    RequestBody.create(requestHandling.applicationJSON, json)
-            )
-
-        when: 'we execute the POST'
-            requestHandling.executeRequest(request)
-
-        then:
-            thrown(ServiceUnavailableException)
-    }
-
-    @Retry
-    def "can correctly identify connect timeouts"() {
-        given: 'a non-routable IP address that will throw a connect timeout (most of the time)'
-            String url = "http://10.255.255.1"
-
-        when:
-            requestHandlingWithShortTimeouts.executeGET(url)
-
-        then:
-            def exception = thrown(ServiceUnavailableException)
-
-        and: 'we correctly detected a connect timeout'
-            exception.wasConnectTimeout()
-
-        and: 'we did not detect a read timeout'
-            !exception.wasReadTimeout()
-    }
-
-    def "can correctly identify read timeouts"() {
-        given: 'an web server that takes 5 seconds to return'
-            webServer.getClient()
-                    .when(request().withPath(uri))
-                    .respond(response().withDelay(TimeUnit.SECONDS, 5))
-
-        when:
-            requestHandlingWithShortTimeouts.executeGET(url)
-
-        then:
-            def exception = thrown(ServiceUnavailableException)
-
-        and: 'we correctly detected a read timeout'
-            !exception.wasConnectTimeout()
-
-        and: 'we did not detect a connect timeout'
-            exception.wasReadTimeout()
-    }
-
-    def "500s that contain error messages & payloads are correctly parsed"() {
+    def "when a service returns a 500 then a HttpServerException is thrown"() {
         given:
             webServer.getClient()
                     .when(request().withPath(uri))
                     .respond(
-                        response()
+                    response()
                             .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code())
                             .withReasonPhrase(HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase())
                             .withBody("payload")
-                    )
+            )
 
         when:
             requestHandling.executeGET(url)
 
         then:
-            def exception = thrown(Non200ResponseException)
+            def exception = thrown(HttpServerException)
 
         and: 'correctly parsed the response'
             exception.httpResponse.statusMessage == HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase()
@@ -169,5 +118,57 @@ class HttpRequestHandlingTest extends Specification {
                 \tBody = payload
             """.stripIndent()
 
+    }
+
+    def "when a service does not respond then a NoResponseException is thrown"() {
+        given: 'a request to POST to URL that does not exist'
+            def url = "https://www.someurlthatprobablydoesnotexistkappakappaboingboing.com"
+            def request = requestHandling.buildRequestForPOST(
+                    url,
+                    RequestBody.create(requestHandling.applicationJSON, json)
+            )
+
+        when: 'we execute the POST'
+            requestHandling.executeRequest(request)
+
+        then:
+            thrown(NoResponseException)
+    }
+
+    @Retry
+    def "can correctly identify connect timeouts"() {
+        given: 'a non-routable IP address that will throw a connect timeout (most of the time)'
+            String url = "http://10.255.255.1"
+
+        when:
+            requestHandlingWithShortTimeouts.executeGET(url)
+
+        then:
+            def exception = thrown(NoResponseException)
+
+        and: 'we correctly detected a connect timeout'
+            exception.isConnectTimeout()
+
+        and: 'we did not detect a read timeout'
+            !exception.isReadTimeout()
+    }
+
+    def "can correctly identify read timeouts"() {
+        given: 'an web server that takes 5 seconds to return'
+            webServer.getClient()
+                    .when(request().withPath(uri))
+                    .respond(response().withDelay(TimeUnit.SECONDS, 5))
+
+        when:
+            requestHandlingWithShortTimeouts.executeGET(url)
+
+        then:
+            def exception = thrown(NoResponseException)
+
+        and: 'we correctly detected a read timeout'
+            !exception.isConnectTimeout()
+
+        and: 'we did not detect a connect timeout'
+            exception.isReadTimeout()
     }
 }

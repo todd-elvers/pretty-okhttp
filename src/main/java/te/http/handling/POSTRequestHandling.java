@@ -9,19 +9,20 @@ import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import te.http.handling.error.exceptions.Non200ResponseException;
-import te.http.handling.error.exceptions.ServiceUnavailableException;
+import te.http.handling.error.exceptions.HttpClientException;
+import te.http.handling.error.exceptions.HttpServerException;
+import te.http.handling.error.exceptions.NoResponseException;
 
 public interface POSTRequestHandling {
 
     Headers getDefaultHeaders();
-    HttpResponse executeRequest(Request request) throws Non200ResponseException, ServiceUnavailableException;
+    HttpResponse executeRequest(Request request) throws HttpClientException, HttpServerException, NoResponseException;
 
     /**
      * URL encodes the provided form data and then POSTs it w/ the application/x-www-form-urlencoded"
      * Content-Type header set.
      */
-    default HttpResponse executeFormPOST(String url, Map<String, ?> formData) throws Non200ResponseException, ServiceUnavailableException {
+    default HttpResponse executeFormPOST(String url, Map<String, ?> formData) throws HttpClientException, HttpServerException, NoResponseException {
         FormBody formBody = urlEncodeAsFormData(formData);
         Request request = buildRequestForPOST(url, formBody);
 
@@ -34,7 +35,7 @@ public interface POSTRequestHandling {
      * @apiNote This does not handle "application/x-www-form-urlencoded" content, use {@link
      * #executeFormPOST(String, Map)} for that.
      */
-    default HttpResponse executePOST(String url, MediaType contentType, String content) throws Non200ResponseException, ServiceUnavailableException {
+    default HttpResponse executePOST(String url, MediaType contentType, String content) throws HttpClientException, HttpServerException, NoResponseException {
         RequestBody requestBody = RequestBody.create(contentType, content.getBytes());
         Request request = buildRequestForPOST(url, requestBody);
 
