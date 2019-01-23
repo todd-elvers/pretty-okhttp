@@ -80,7 +80,7 @@ class WebsiteHealthChecker implements HttpRequestHandling {
         try {
             HttpResponse httpResponse = executeFormPOST(url, formData);
             
-            statusCode = Optional.of(httpResponse.getStatusCode());
+            return Optional.of(httpResponse.getStatusCode());
         } catch(IOException ex) {
             // Do nothing
         }
