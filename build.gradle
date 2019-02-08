@@ -6,7 +6,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.squareup.okhttp3:okhttp:3.11.0'                // Robust, thread-safe HTTP handling
+    compile 'com.squareup.okhttp3:okhttp:3.13.1'                // Robust, thread-safe HTTP handling
     compile 'io.vavr:vavr:0.9.2'                                // Functional Java features
     compile 'org.slf4j:slf4j-api:1.7.25'                        // Implementation-agnostic logging
     compile 'com.google.code.gson:gson:2.8.5'                   // Json serialization & deserialization
