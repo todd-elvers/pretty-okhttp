@@ -24,7 +24,7 @@ import static org.mockserver.model.HttpResponse.response
 class HttpRequestHandlingIntegrationTest extends Specification {
 
     @Rule
-    MockServerRule webServer = new MockServerRule(this)
+    MockServerRule webServer = new MockServerRule(this, 8888)
 
     @Shared
     @Subject
@@ -152,6 +152,7 @@ class HttpRequestHandlingIntegrationTest extends Specification {
             !exception.isReadTimeout()
     }
 
+    @Retry
     def "can correctly identify read timeouts"() {
         given: 'an web server that takes 5 seconds to return'
             webServer.getClient()
