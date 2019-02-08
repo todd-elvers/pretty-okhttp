@@ -80,7 +80,7 @@ class WebsiteHealthChecker implements HttpRequestHandling {
         try {
             HttpResponse httpResponse = executeFormPOST(url, formData);
             
-            statusCode = Optional.of(httpResponse.getStatusCode());
+            return Optional.of(httpResponse.getStatusCode());
         } catch(IOException ex) {
             // Do nothing
         }
@@ -139,7 +139,7 @@ class FormUploader implements HttpRequestHandling {
         } catch(HttpClientException ex) {
             // 400 error - we don't normally want to retry on these
         } catch(NoResponseException | HttpServerException ex) {
-            // 500 error or no response - retry up to 4 times
+            // 500 error or no response - perhaps retrying the request will work
             handleRetry();
         }
     }
@@ -250,4 +250,4 @@ In your `build.gradle` file:
 * Under `repositories`
     * Add `maven { url "https://jitpack.io" }`, making sure it's the _last_ repo declared
 * Under `dependencies`
-    * Add `compile 'com.github.todd-elvers:pretty-okhttp:3.1.0'`
+    * Add `compile 'com.github.todd-elvers:pretty-okhttp:4.0.0'`
