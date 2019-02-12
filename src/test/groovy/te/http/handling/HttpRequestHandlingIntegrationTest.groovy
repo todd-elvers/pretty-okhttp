@@ -11,6 +11,7 @@ import spock.lang.Retry
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 import te.http.handling.error.exceptions.HttpClientException
 import te.http.handling.error.exceptions.HttpServerException
 import te.http.handling.error.exceptions.NoResponseException
@@ -30,18 +31,6 @@ class HttpRequestHandlingIntegrationTest extends Specification {
     @Subject
     HttpRequestHandling requestHandling = new HttpRequestHandling() {}
 
-    @Shared
-    @Subject
-    HttpRequestHandling requestHandlingWithShortTimeouts = new HttpRequestHandling() {
-        @Override
-        OkHttpClient getHttpClient() {
-            return new OkHttpClient.Builder()
-                    .readTimeout(1, TimeUnit.MILLISECONDS)
-                    .connectTimeout(1, TimeUnit.MILLISECONDS)
-                    .build()
-        }
-    }
-
     String uri = "/test/uri/${RandomUtils.nextLong(1, 1_000_000)}"
     String url = "http://localhost:${webServer.port}${uri}"
     String json = '{"some":"json"}'
@@ -60,9 +49,9 @@ class HttpRequestHandlingIntegrationTest extends Specification {
 
         then: 'we return the response wrapped in our HttpResponse object'
             httpResponse
-            httpResponse.isSuccessful()
+            httpResponse.is200()
             httpResponse.statusCode == 200
-            httpResponse.getBody().get() == json
+            httpResponse.getBodyAsString().get() == json
             !httpResponse.statusMessage.isEmpty()
     }
 
@@ -106,7 +95,7 @@ class HttpRequestHandlingIntegrationTest extends Specification {
 
         and: 'correctly parsed the response'
             exception.httpResponse.statusMessage == HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase()
-            exception.httpResponse.body.get() == "payload"
+            exception.httpResponse.bodyAsString.get() == "payload"
 
         and: 'the exception message was as detailed as possible'
             exception.message == """\
@@ -117,6 +106,39 @@ class HttpRequestHandlingIntegrationTest extends Specification {
                 \tBody = payload
             """.stripIndent()
 
+    }
+
+    @Unroll
+    def "#non200Response.code()'s cause no exception when isNon200ResponseExceptional() returns false"() {
+        given:
+            HttpRequestHandling requestHandling = new HttpRequestHandling() {
+                @Override
+                boolean isNon200ResponseExceptional() {
+                    return false
+                }
+            }
+
+        and:
+            webServer.getClient()
+                    .when(request().withPath(uri))
+                    .respond(
+                    response()
+                            .withStatusCode(non200Response.code())
+                            .withReasonPhrase(non200Response.reasonPhrase())
+                            .withBody("payload")
+            )
+
+        when:
+            requestHandling.executeGET(url)
+
+        then:
+            noExceptionThrown()
+
+        where:
+            non200Response << [
+                    HttpStatusCode.INTERNAL_SERVER_ERROR_500,
+                    HttpStatusCode.BAD_REQUEST_400
+            ]
     }
 
     def "when a service does not respond then a NoResponseException is thrown"() {
@@ -136,7 +158,18 @@ class HttpRequestHandlingIntegrationTest extends Specification {
 
     @Retry
     def "can correctly identify connect timeouts"() {
-        given: 'a non-routable IP address that will throw a connect timeout (most of the time)'
+        given:
+            HttpRequestHandling requestHandlingWithShortTimeouts = new HttpRequestHandling() {
+                @Override
+                OkHttpClient getHttpClient() {
+                    return new OkHttpClient.Builder()
+                            .readTimeout(1, TimeUnit.MILLISECONDS)
+                            .connectTimeout(1, TimeUnit.MILLISECONDS)
+                            .build()
+                }
+            }
+
+        and: 'a non-routable IP address that will throw a connect timeout (most of the time)'
             String url = "http://10.255.255.1"
 
         when:
@@ -154,7 +187,18 @@ class HttpRequestHandlingIntegrationTest extends Specification {
 
     @Retry
     def "can correctly identify read timeouts"() {
-        given: 'an web server that takes 5 seconds to return'
+        given:
+            HttpRequestHandling requestHandlingWithShortTimeouts = new HttpRequestHandling() {
+                @Override
+                OkHttpClient getHttpClient() {
+                    return new OkHttpClient.Builder()
+                            .readTimeout(1, TimeUnit.MILLISECONDS)
+                            .connectTimeout(1, TimeUnit.MILLISECONDS)
+                            .build()
+                }
+            }
+
+        and: 'a web server that takes 5 seconds to return'
             webServer.getClient()
                     .when(request().withPath(uri))
                     .respond(response().withDelay(TimeUnit.SECONDS, 5))
