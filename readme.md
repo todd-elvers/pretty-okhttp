@@ -11,10 +11,9 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 ## Why not just use the libraries directly?
 
-**tl;dr**
-* Convenience methods were added for common operations (e.g. normal GET/POST, POSTing a form, etc.)
+* Convenience methods exist to abstract away common operations (e.g. normal GET/POST, POSTing a form, etc.)
 * Serialization/deserialization support was added for `Date`, `LocalDate`, and `LocalDateTime` classes
-    * Multiple formats are attempted deserialization:
+    * Multiple formats are attempted during deserialization:
         * [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time)
         * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601)
         * MM/dd/yyyy
@@ -22,41 +21,6 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 
 The goal was to create an easier to use version of OkHttp that yielded in prettier code.
-
-### Full Explanation
-
-#### OkHttp
-
-[OkHttp](http://square.github.io/okhttp/) is a great, thread-safe library for handling HTTP requests, 
-but it requires a lot of boilerplate
-
-##### Making it better:
-Implement OkHttp behind a Java 8 interface, which simultaneously requires 
-no configuration while also allowing for a high degree of customization.
-
-
-#### Gson
-
-[Gson](https://github.com/google/gson) is a great library for object serialization to/from JSON, 
-but does not support date/time serialization out-of-the-box.
-
-##### Making it better:
-Serialization was added for Java's `Date`, `LocalDate`, and `LocalDateTime` classes to the Gson instance
-that is available after implementing `HttpRequestHandling` (or just simply `JsonMarshalling`). 
-
-###### Serialization:
-During serialization the above date/time classes are sent over the wire as 
-[ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) strings. See the classes in 
-[this package](https://github.com/todd-elvers/pretty-okhttp/tree/master/src/main/java/te/http/handling/serialization) 
-for more details. To override this behavior entirely override the `getJsonMarshaller()`
-method and initialize Gson in whatever manner you'd like.
-
-###### Deserialization:
-During de-serialization Gson will try the Unix epoch, the ISO-8601 format, and 
-then a few other common formats (e.g. "MM/dd/yyyy", etc.).  See the classes in 
-[this package](https://github.com/todd-elvers/pretty-okhttp/tree/master/src/main/java/te/http/handling/deserialization) 
-for more details. To override this behavior entirely override the `getJsonMarshaller()`
-method and initialize Gson in whatever manner you'd like.
 
 <br/>
 
