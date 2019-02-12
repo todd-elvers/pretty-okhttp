@@ -11,8 +11,9 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 ## Why not just use the libraries directly?
 
-* Convenience methods exist to abstract away common operations (e.g. normal GET/POST, POSTing a form, etc.)
-* Serialization/deserialization support was added for `Date`, `LocalDate`, and `LocalDateTime` classes
+This library requires zero configuration, allows for a high degree of customization, and provides:
+* Convenience methods to simplify common operations (e.g. normal GET/POST, POSTing a form, etc.)
+* Serialization/deserialization support for `Date`, `LocalDate`, and `LocalDateTime` classes
     * Multiple formats are attempted during deserialization:
         * [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time)
         * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601)
