@@ -16,56 +16,43 @@ import okhttp3.ResponseBody;
  * body and closes the buffer, ensuring no memory leaks occur.
  *
  * Since OkHttp's {@link Response} only allows one read of the response body, and since we
- * read it during instantiation, to fetch the response body yourself use {@link #body} and
- * <b>not</b> {@link Response#body()}.
+ * read it during instantiation, to fetch the response body yourself use {@link #getBodyAsString}
+ * or {@link #getBodyAsBytes}.
  */
 public class HttpResponse {
 
-    private boolean isSuccessful;
-    private @Nullable String body;
+    private @Nullable byte[] body;
     private String statusMessage;
     private int statusCode;
     private Response wrappedResponse;
-    private Request request;
 
     // Convenience constructor to simplify testing
     public HttpResponse() {}
 
     public HttpResponse(Response okHttpResponse) {
-        this.isSuccessful = okHttpResponse.isSuccessful();
         this.wrappedResponse = okHttpResponse;
-        this.request = okHttpResponse.request();
         this.statusCode = okHttpResponse.code();
         this.statusMessage = okHttpResponse.message();
-        this.body = Try.of(okHttpResponse::body).mapTry(ResponseBody::string).getOrNull();
+        this.body = Try.of(okHttpResponse::body).mapTry(ResponseBody::bytes).getOrNull();
     }
 
-    public boolean isSuccessful() {
-        return isSuccessful;
+    public boolean is200() {
+        return statusCode >= 200 && statusCode < 300;
     }
 
-    public boolean isNotSuccessful() {
-        return !isSuccessful;
+    public boolean isNot200() {
+        return !is200();
     }
 
-    public HttpResponse setSuccessful() {
-        this.isSuccessful = true;
-        return this;
-    }
-
-    public Optional<String> getBody() {
+    public Optional<byte[]> getBodyAsBytes() {
         return Optional.ofNullable(body);
     }
 
-    public String getBodyOrNull() {
-        return Optional.ofNullable(body).orElse(null);
+    public Optional<String> getBodyAsString() {
+        return getBodyAsBytes().map(String::new);
     }
 
-    public String getBodyOrDefault(String defaultString) {
-        return Optional.ofNullable(body).orElse(defaultString);
-    }
-
-    public HttpResponse setBody(String body) {
+    public HttpResponse setBody(byte[] body) {
         this.body = body;
         return this;
     }
@@ -88,6 +75,9 @@ public class HttpResponse {
         return this;
     }
 
+    /**
+     * @return the wrapped OkHttp {@link Response}.
+     */
     public Response getWrappedResponse() {
         return wrappedResponse;
     }
@@ -97,24 +87,21 @@ public class HttpResponse {
         return this;
     }
 
+    /**
+     * @return the original {@link Request} that was made.
+     */
     public Request getRequest() {
-        return request;
-    }
-
-    public HttpResponse setRequest(Request request) {
-        this.request = request;
-        return this;
+        return wrappedResponse.request();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("isSuccessful", isSuccessful)
                 .append("body", body)
                 .append("statusMessage", statusMessage)
                 .append("statusCode", statusCode)
                 .append("wrappedResponse", wrappedResponse)
-                .append("request", request)
+                .append("request", getRequest())
                 .toString();
     }
 }

@@ -7,8 +7,7 @@ class HttpResponseTest extends Specification {
     def "has a no-arg constructor and a fluent interface"() {
         expect:
             new HttpResponse()
-                    .setBody("{}")
-                    .setSuccessful()
+                    .setBody("{}".bytes)
                     .setStatusCode(200)
                     .setStatusMessage("OK")
     }
