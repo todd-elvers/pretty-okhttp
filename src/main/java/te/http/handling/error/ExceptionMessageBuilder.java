@@ -40,7 +40,7 @@ public class ExceptionMessageBuilder {
                 httpResponse.getRequest().url().toString(),
                 httpResponse.getRequest().method(),
                 httpResponse.getStatusMessage(),
-                httpResponse.getBody().orElse(null)
+                httpResponse.getBodyAsString().orElse(null)
         );
     }
 
