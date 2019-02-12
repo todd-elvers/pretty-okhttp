@@ -41,13 +41,13 @@ class POSTRequestHandlingTest extends Specification {
             responseOfPOST.statusCode == 200
             responseOfPOST.statusMessage
             responseOfPOST.request.url().toString() == url
-            responseOfPOST.body.get() == "{}"
+            responseOfPOST.bodyAsString.get() == "{}"
 
         and:
             responseOfFormPOST.statusCode == 200
             responseOfFormPOST.statusMessage
             responseOfFormPOST.request.url().toString() == url
-            responseOfFormPOST.body.get() == "{}"
+            responseOfFormPOST.bodyAsString.get() == "{}"
     }
 
 
