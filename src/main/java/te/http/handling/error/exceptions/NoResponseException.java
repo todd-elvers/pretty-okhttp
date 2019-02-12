@@ -1,14 +1,13 @@
 package te.http.handling.error.exceptions;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 
 import okhttp3.Request;
 import te.http.handling.error.ExceptionMessageBuilder;
 import te.http.handling.error.TimeoutDetector;
 
 /**
- * Occurs when we get no response from a requested resource.
+ * Occurs when there is no response from the requested resource.
  */
 public class NoResponseException extends IOException {
 
@@ -39,17 +38,16 @@ public class NoResponseException extends IOException {
     }
 
     /**
-     * @return true if, and only if, the exception thrown is a {@link SocketTimeoutException}
-     * whose text exactly matches {@link TimeoutDetector#CONNECT_TIMEOUT_TEXT}.
+     * @return true if, and only if, there was no response from the requested resource
+     * due to a timeout while establishing a connection.
      */
     public boolean isConnectTimeout() {
         return timeoutDetector.isConnectTimeout(rootCause);
     }
 
     /**
-     * @return true if, and only if, the exception thrown wraps another exception, both of which
-     * are {@link SocketTimeoutException}s, and if the wrapped exception's message's text exactly
-     * matches {@link TimeoutDetector#READ_TIMEOUT_TEXT}.
+     * @return true if, and only if, there was no response from the requested resource
+     * due to a timeout while reading the response.
      */
     public boolean isReadTimeout() {
         return timeoutDetector.isReadTimeout(rootCause);
