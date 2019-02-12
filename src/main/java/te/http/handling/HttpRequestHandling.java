@@ -21,7 +21,6 @@ import te.http.handling.error.exceptions.NoResponseException;
 public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHandling, JsonMarshalling {
 
     MediaType applicationJSON = Defaults.applicationJSON;
-    MediaType applicationXML = Defaults.applicationXML;
 
     default OkHttpClient getHttpClient() {
         return Defaults.httpClient;
@@ -38,6 +37,11 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
     default Headers getDefaultHeaders() {
         return Defaults.jsonHeaders;
     }
+
+    /**
+     * @return whether or not a non-200 level response should cause an exception to be thrown
+     */
+    default boolean isNon200ResponseExceptional() { return true; }
 
     /**
      * Executes a given {@link Request} and returns the {@link Response} wrapped in a {@link
@@ -63,7 +67,7 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
                 .of(HttpResponse::new)
                 .getOrElseThrow((exception) -> new NoResponseException(exception, request));
 
-        if (response.isNotSuccessful()) {
+        if (response.isNot200() && isNon200ResponseExceptional()) {
             return handleNon200Response(response);
         }
 
@@ -71,10 +75,11 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
     }
 
     /**
-     * Defines the behavior for when a response has a non-200 level status code (400, 500, etc.).
+     * Defines the behavior for when a response has a non-200 level status code (300, 400, 500, etc.).
      *
-     * <p>By default, 400 level status codes throw {@link HttpClientException}s and 500
-     * level status codes throw {@link HttpServerException}s.
+     * <p>By default, 300 level status codes do nothing, 400 level status codes
+     * throw {@link HttpClientException}s and 500 level status codes throw
+     * {@link HttpServerException}.
      */
     default HttpResponse handleNon200Response(HttpResponse response) throws HttpClientException, HttpServerException {
         int statusCode = response.getStatusCode();
@@ -92,7 +97,6 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
 
     interface Defaults {
         MediaType applicationJSON = MediaType.parse("application/json");
-        MediaType applicationXML = MediaType.parse("application/xml");
 
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .build();
