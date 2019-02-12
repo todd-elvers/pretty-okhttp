@@ -11,7 +11,21 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 ## Why not just use the libraries directly?
 
-### OkHttp
+**tl;dr**
+* Convenience methods were added for common operations (e.g. normal GET/POST, POSTing a form, etc.)
+* Serialization/deserialization support was added for `Date`, `LocalDate`, and `LocalDateTime` classes
+    * Multiple formats are attempted deserialization:
+        * [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time)
+        * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601)
+        * MM/dd/yyyy
+        * MM-dd-yyyy
+
+
+The goal was to create an easier to use version of OkHttp that yielded in prettier code.
+
+### Full Explanation
+
+#### OkHttp
 
 [OkHttp](http://square.github.io/okhttp/) is a great, thread-safe library for handling HTTP requests, 
 but it requires a lot of boilerplate
@@ -21,52 +35,60 @@ Implement OkHttp behind a Java 8 interface, which simultaneously requires
 no configuration while also allowing for a high degree of customization.
 
 
-### Gson
+#### Gson
 
 [Gson](https://github.com/google/gson) is a great library for object serialization to/from JSON, 
 but does not support date/time serialization out-of-the-box.
 
 ##### Making it better:
-Serialization was added for Java's Date, LocalDate, and LocalDateTime classes to the Gson instance
+Serialization was added for Java's `Date`, `LocalDate`, and `LocalDateTime` classes to the Gson instance
 that is available after implementing `HttpRequestHandling` (or just simply `JsonMarshalling`). 
 
 ###### Serialization:
-During serialization the above date/time classes are sent over the wire as as 
+During serialization the above date/time classes are sent over the wire as 
 [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) strings. See the classes in 
 [this package](https://github.com/todd-elvers/pretty-okhttp/tree/master/src/main/java/te/http/handling/serialization) 
 for more details. To override this behavior entirely override the `getJsonMarshaller()`
-method. 
+method and initialize Gson in whatever manner you'd like.
 
 ###### Deserialization:
 During de-serialization Gson will try the Unix epoch, the ISO-8601 format, and 
 then a few other common formats (e.g. "MM/dd/yyyy", etc.).  See the classes in 
 [this package](https://github.com/todd-elvers/pretty-okhttp/tree/master/src/main/java/te/http/handling/deserialization) 
 for more details. To override this behavior entirely override the `getJsonMarshaller()`
-method.
-
-So the **tl;dr** here is that we cover some general cases the original libraries
-do not cover, simplify use of those libraries, and then alter some of the behavior
-of those libraries.  OkHttp was just ok, this is pretty-ok. 
+method and initialize Gson in whatever manner you'd like.
 
 <br/>
 
 ## How to use it
 
 1. Make your class implement `HttpRequestHandling`
-    * Override any of the default behavior if necessary (e.g. `getDefaultHeader()`, etc.) 
+    * Override any of the default behavior if necessary (e.g. `getDefaultHeader()`, `isNon200ResponseExceptional()`, etc.) 
 2. Make a request to your desired endpoint 
     * For GET requests = `executeGET`
     * For POST requests = `executePOST`, or `executeFormPOST`
 3. You're done! Optionally you could marshall the resulting JSON into an object or list of objects
     * Marshalling JSON = `toJson`, `fromJson`, or `fromJsonList`
+    
+##### Need more customization?
+If the above does not offer the customization you require you can build a `Request` object with one of the 
+following convenience methods:
+    
+* `buildRequestForGET`
+* `buildRequestForPOST`
+
+This will return you a `Request` object you can then pass to `executeRequest()`.  If you'd like to customize 
+the request further simply call `newBuilder()` on the resulting `Request` and customize to your hearts content.
+
+And lastly, if the above is not helpful, you can always build your `Request` from scratch via `new Request.Builder()`.
 
 <br/>
 
 ## Examples
 
 I'm a big fan of functional programming and have come to love the functional 
-Try from [vavr](http://www.vavr.io/), so all the examples below contain a
-traditional Java implementation and then also the vavr equivalent.  
+Try from [vavr](http://www.vavr.io/), so if you prefer [to see examples of pretty-okhttp
+using Vavr click here](docs/vavr-examples.md).  
 
 <br/>
 
@@ -74,27 +96,17 @@ traditional Java implementation and then also the vavr equivalent.
 
 ```java
 class WebsiteHealthChecker implements HttpRequestHandling {
-    
-    // Traditional implementation
     public Optional<Integer> fetchStatusCodeFromService(String url) {
         try {
-            HttpResponse httpResponse = executeFormPOST(url, formData);
-            
-            return Optional.of(httpResponse.getStatusCode());
+            return Optional.of(
+                    executeFormPOST(url, formData).getStatusCode()
+            );
         } catch(IOException ex) {
             // Do nothing
         }
         
         return Optional.empty();
     }
-    
-    // Vavr implementation
-    public Optional<Integer> fetchStatusCodeFromService(String url) {
-        return Try.of(() -> executeGET(url))
-                .map(HttpResponse::getStatusCode)
-                .toJavaOptional();
-    }
-    
 }
 ```
 
@@ -104,21 +116,21 @@ And an associated, yet completely bogus, Spock test illustrating how testing wor
 class WebsiteHealthCheckerTest extends Specification {
     
     void "returns empty optional when service returns non-200"() {
-        given:
-        def websiteChecker = new WebsiteHealthChecker() {
-            @Override
-            HttpResponse executeGET(String url) {
-                throw new HttpClientException("failed, non-200")
-            }   
-        }
+        given: 'an implementation that always throws HttpClientException'
+            def websiteChecker = new WebsiteHealthChecker() {
+                @Override
+                HttpResponse executeGET(String url) {
+                    throw new HttpClientException("failed, non-200")
+                }   
+            }
         
-        when:
-        Optional<Integer> result = websiteChecker.fetchStatusCodeFromService("some-url")
+        when: 'we fetch the status code for some service URL'
+            Optional<Integer> result = websiteChecker.fetchStatusCodeFromService("some-url")
         
-        then: 'the exception was swallowed and we return an empty optional'
-        noExceptionsThrown()
-        !result.isPresent()
-        ...
+        then: 'the exception was swallowed and we received an empty optional'
+            noExceptionsThrown()
+            !result.isPresent()
+            ...
     }
     
 }
@@ -132,7 +144,6 @@ class WebsiteHealthCheckerTest extends Specification {
 ```java
 class FormUploader implements HttpRequestHandling {
     
-    // Traditional implementation
     private Integer uploadFormWithRetry(String url, Map<String, ?> formData, int retryCount) {
         try {
             return executeFormPOST(url, formData).getStatusCode();
@@ -142,18 +153,6 @@ class FormUploader implements HttpRequestHandling {
             // 500 error or no response - perhaps retrying the request will work
             handleRetry();
         }
-    }
-    
-    // Vavr implementation
-    private Integer uploadFormWithRetry(String url, Map<String, ?> formData) {
-        return Try.of(() -> executeGET(url))
-                .mapTry(httpResponse -> executeFormPOST(url, formData))
-                .map(HttpResponse::getStatusCode)
-                .recoverWith(r -> Match(r).of(
-                        Case($(instanceOf(HttpServerException.class)), handleRetry),
-                        Case($(instanceOf(NoResponseException.class)), handleRetry)
-                ))
-                .get();
     }
     
 }
@@ -175,7 +174,6 @@ class UserRetriever implements HttpRequestHandling {
             .build();
     }
     
-    // Traditional implementation
     public Optional<User> retrieve(String url) {
         User user = null;
 
@@ -193,27 +191,15 @@ class UserRetriever implements HttpRequestHandling {
         return Optional.ofNullable(user);
     }
     
-    // Vavr implementation
-    public Optional<User> retrieve(String url) {
-        return Try.of(() -> executeGET(url))
-                .mapTry(httpResponse -> fromJson(httpResponse.getBodyOrNull(), User.class))
-                .recoverWith(r -> Match(r).of(
-                     Case($(instanceOf(HttpClientException.class)), handle400),
-                     Case($(instanceOf(HttpServerException.class)), handle500),
-                     Case($(instanceOf(NoResponseException.class)), handleNetworkError)
-                ))
-                .toJavaOptional();
-    }
-    
-    
     static class User {
-        public String username;
+        private String username;
         
         // Map "website" in JSON to this field
         @SerializedName("website")  
-        public String url;
-    }
+        private  String url;
         
+        // Getters/Setters etc.
+    }
 }
 ```
 
