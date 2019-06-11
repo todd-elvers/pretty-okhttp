@@ -21,7 +21,7 @@ This library requires zero configuration, allows for a high degree of customizat
         * MM-dd-yyyy
 
 
-The goal was to create an easier to use version of OkHttp that yielded in prettier code.
+The goal was to create an easier to use version of OkHttp that yielded prettier code.
 
 <br/>
 
