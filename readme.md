@@ -21,13 +21,13 @@ This library requires zero configuration, allows for a high degree of customizat
         * MM-dd-yyyy
 
 
-The goal was to create an easier to use version of OkHttp that yielded prettier code.
+The goal was to create an easier-to-use version of OkHttp that yielded prettier code.
 
 <br/>
 
 ## How to use it
 
-1. Make your class implement `HttpRequestHandling`
+1. Implement `HttpRequestHandling` on the class you're going to use to make HTTP requests
     * Override any of the default behavior if necessary (e.g. `getDefaultHeader()`, `isNon200ResponseExceptional()`, etc.) 
 2. Make a request to your desired endpoint 
     * For GET requests = `executeGET`
