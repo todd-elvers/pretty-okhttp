@@ -67,7 +67,7 @@ class WebsiteHealthChecker implements HttpRequestHandling {
                     executeFormPOST(url, formData).getStatusCode()
             );
         } catch(IOException ex) {
-            // Do nothing
+            // ...
         }
         
         return Optional.empty();
