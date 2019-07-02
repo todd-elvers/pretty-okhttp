@@ -1,8 +1,8 @@
 package te.http.handling;
 
+import org.apache.commons.collections4.MapUtils;
+
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,31 +35,22 @@ public interface GETRequestHandling {
     }
 
     default Request buildRequestForGET(String url, @Nullable Map<String, ?> urlParams) {
-        boolean isUrlParamsEmpty = urlParams == null || urlParams.size() == 0;
-
         return new Request.Builder()
-                .url(isUrlParamsEmpty ? url : addQueryParamsToURL(url, urlParams))
+                .url(MapUtils.isEmpty(urlParams) ? url : addQueryParamsToURL(url, urlParams))
                 .headers(getDefaultHeaders())
                 .get()
                 .build();
     }
 
     default String addQueryParamsToURL(String url, @Nonnull Map<String, ?> urlParams) {
-        HttpUrl parsedUrl = HttpUrl.parse(url);
-        if (parsedUrl == null) {
-            throw new RuntimeException("Could not parse " + url + " - URL appears to be malformed.");
-        }
+        HttpUrl.Builder urlBuilder = HttpUrl.get(url).newBuilder();
 
-        HttpUrl.Builder urlBuilder = parsedUrl.newBuilder();
-        urlParams.entrySet()
-                .stream()
-                .collect(
-                        Collectors.toMap(
-                                Map.Entry::getKey,
-                                entry -> Objects.toString(entry.getValue(), "")
-                        )
-                )
-                .forEach(urlBuilder::addQueryParameter);
+        for (Map.Entry<String, ?> entry : urlParams.entrySet()) {
+            String key = entry.getKey();
+            String value = MapUtils.getString(urlParams, entry.getKey(), "");
+
+            urlBuilder.addQueryParameter(key, value);
+        }
 
         return urlBuilder.build().toString();
     }
