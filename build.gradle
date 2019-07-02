@@ -24,10 +24,8 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:1.2-groovy-2.4'   // Spock testing framework
 }
 
-apply from: 'attach-sources.gradle'
-
 // Specify `-PshowLogs` or `-PshowOutput` when running Gradle tests to pipe output to the console
-test { 
+test {
     testLogging {
         if(project.hasProperty('showLogs') || project.hasProperty('showOutput')) {
             showStandardStreams = true
@@ -35,3 +33,6 @@ test {
         }
     }
 }
+
+apply from: 'attach-sources.gradle'
+apply from: 'add-latest-version-plugin.gradle'
