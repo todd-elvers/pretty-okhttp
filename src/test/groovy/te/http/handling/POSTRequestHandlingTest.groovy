@@ -35,7 +35,7 @@ class POSTRequestHandlingTest extends Specification {
 
         when:
             def responseOfPOST = requestHandling.executePOST(url, HttpRequestHandling.applicationJSON, '{}')
-            def responseOfFormPOST = requestHandling.executeFormPOST(url, new HashMap<String, Object>())
+            def responseOfFormPOST = requestHandling.executeFormPOST(url, [:])
 
         then:
             responseOfPOST.statusCode == 200
