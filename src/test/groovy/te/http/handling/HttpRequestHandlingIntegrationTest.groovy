@@ -109,7 +109,7 @@ class HttpRequestHandlingIntegrationTest extends Specification {
     }
 
     @Unroll
-    def "#non200Response.code()'s cause no exception when isNon200ResponseExceptional() returns false"() {
+    def "#non200Response.code()'s cause no exception when isNon200Exceptional() returns false"() {
         given:
             HttpRequestHandling requestHandling = new HttpRequestHandling() {
                 @Override

@@ -1,8 +1,10 @@
 package te.http.handling;
 
+import org.apache.commons.collections4.MapUtils;
+
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+
+import javax.annotation.Nonnull;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -16,6 +18,7 @@ import te.http.handling.error.exceptions.NoResponseException;
 public interface POSTRequestHandling {
 
     Headers getDefaultHeaders();
+
     HttpResponse executeRequest(Request request) throws HttpClientException, HttpServerException, NoResponseException;
 
     /**
@@ -50,18 +53,15 @@ public interface POSTRequestHandling {
                 .build();
     }
 
-    default FormBody urlEncodeAsFormData(Map<String, ?> urlParams) {
+    default FormBody urlEncodeAsFormData(@Nonnull Map<String, ?> urlParams) {
         FormBody.Builder formBodyBuilder = new FormBody.Builder();
 
-        urlParams.entrySet()
-                .stream()
-                .collect(
-                        Collectors.toMap(
-                                Map.Entry::getKey,
-                                entry -> Objects.toString(entry.getValue(), "")
-                        )
-                )
-                .forEach(formBodyBuilder::add);
+        for (Map.Entry<String, ?> entry : urlParams.entrySet()) {
+            String key = entry.getKey();
+            String value = MapUtils.getString(urlParams, entry.getKey(), "");
+
+            formBodyBuilder.add(key, value);
+        }
 
         return formBodyBuilder.build();
     }

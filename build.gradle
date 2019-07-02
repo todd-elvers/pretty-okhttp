@@ -1,4 +1,4 @@
-apply plugin: 'java'
+apply plugin: 'java-library'
 apply plugin: 'groovy'
 
 repositories {
@@ -6,19 +6,22 @@ repositories {
 }
 
 dependencies {
-    compile 'com.squareup.okhttp3:okhttp:3.13.1'                // Robust, thread-safe HTTP handling
-    compile 'io.vavr:vavr:0.9.2'                                // Functional Java features
-    compile 'org.slf4j:slf4j-api:1.7.25'                        // Implementation-agnostic logging
-    compile 'com.google.code.gson:gson:2.8.5'                   // Json serialization & deserialization
-    compile 'com.google.code.findbugs:jsr305:3.0.2'             // @Nullable and other annotations
-    compile 'org.apache.commons:commons-lang3:3.8.1'            // Nice-to-have utility functions
+    api 'com.squareup.okhttp3:okhttp:3.13.1'                            // Robust, thread-safe HTTP handling
+    api 'com.google.code.gson:gson:2.8.5'                               // Json serialization & deserialization
 
-    testCompile 'ch.qos.logback:logback-classic:1.2.3'          // Logger implementation for tests
-    testCompile 'org.mock-server:mockserver-netty:5.4.1'        // Mock Web Server
-    testCompile 'org.mock-server:mockserver-client-java:5.4.1'  // Mock Web Client
-    testCompile 'cglib:cglib-nodep:3.2.9'                       // Spock testing framework
-    testCompile 'org.objenesis:objenesis:3.0.1'                 // Spock testing framework
-    testCompile 'org.spockframework:spock-core:1.2-groovy-2.4'  // Spock testing framework
+    implementation 'io.vavr:vavr:0.9.2'                                 // Functional Java features
+    implementation 'org.slf4j:slf4j-api:1.7.25'                         // Implementation-agnostic logging
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'              // @Nullable and other annotations
+    implementation 'org.apache.commons:commons-lang3:3.9'               // Nice-to-have utility functions
+    implementation 'org.apache.commons:commons-collections4:4.3'        // Nice-to-have utility functions
+
+
+    testImplementation 'ch.qos.logback:logback-classic:1.2.3'           // Logger implementation for tests
+    testImplementation 'org.mock-server:mockserver-netty:5.4.1'         // Mock Web Server
+    testImplementation 'org.mock-server:mockserver-client-java:5.4.1'   // Mock Web Client
+    testImplementation 'cglib:cglib-nodep:3.2.9'                        // Spock testing framework
+    testImplementation 'org.objenesis:objenesis:3.0.1'                  // Spock testing framework
+    testImplementation 'org.spockframework:spock-core:1.2-groovy-2.4'   // Spock testing framework
 }
 
 apply from: 'attach-sources.gradle'
