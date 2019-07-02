@@ -35,4 +35,4 @@ test {
 }
 
 apply from: 'attach-sources.gradle'
-apply from: 'add-latest-version-plugin.gradle'
+apply from: 'add-version-finder.gradle'

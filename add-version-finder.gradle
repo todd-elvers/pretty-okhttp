@@ -12,7 +12,7 @@ dependencyUpdates.resolutionStrategy {
     componentSelection { rules ->
         rules.all { ComponentSelection selection ->
             boolean isNonReleaseVersion = suffixesOfVersionsToOmit.any { qualifier ->
-                selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*/
+                selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*.*/
             }
 
             if (isNonReleaseVersion) {
