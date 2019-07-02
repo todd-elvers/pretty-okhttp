@@ -59,7 +59,8 @@ class GETRequestHandlingTest extends Specification {
 
         where:
             urlParams                    | queryString
+            null                         | ''
             [:]                          | ''
-            [apple: true, banana: false] | '?banana=false&apple=true'
+            [apple: true, banana: false] | '?apple=true&banana=false'
     }
 }
