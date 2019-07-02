@@ -1,0 +1,23 @@
+// Required syntax for applying a plugin from a separate file
+buildscript {
+    repositories.jcenter()
+    dependencies.classpath "com.github.ben-manes:gradle-versions-plugin:0.21.0"
+}
+apply plugin: com.github.benmanes.gradle.versions.VersionsPlugin
+
+
+// Tell :dependencyUpdates to only output release versions
+def suffixesOfVersionsToOmit = ['alpha', 'beta', 'rc', 'cr', 'm', 'preview', 'b', 'ea']
+dependencyUpdates.resolutionStrategy {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean isNonReleaseVersion = suffixesOfVersionsToOmit.any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]$qualifier[.\d-+]*/
+            }
+
+            if (isNonReleaseVersion) {
+                selection.reject('Release candidate')
+            }
+        }
+    }
+}
