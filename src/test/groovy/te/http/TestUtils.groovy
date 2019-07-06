@@ -4,10 +4,11 @@ import okhttp3.Protocol
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.ResponseBody
+import org.apache.commons.lang3.time.FastDateFormat
 import te.http.handling.HttpRequestHandling
 import te.http.handling.HttpResponse
 
-class TestHelper {
+class TestUtils {
 
     static HttpResponse buildEmpty200ResponseFor(Request request) {
         return buildResponse(request, 200, '{}')
@@ -27,4 +28,7 @@ class TestHelper {
         )
     }
 
+    static Date newDate(String input, String format = "MM/dd/yyyy") {
+        FastDateFormat.getInstance(format).parse(input)
+    }
 }
