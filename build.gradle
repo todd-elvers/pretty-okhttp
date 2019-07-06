@@ -1,6 +1,10 @@
 apply plugin: 'java-library'
 apply plugin: 'groovy'
 
+apply from: 'add-integration-tests.gradle'
+apply from: 'add-versions-plugin.gradle'
+apply from: 'attach-sources.gradle'
+
 repositories {
     mavenCentral()
 }
@@ -15,24 +19,24 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.9'               // Nice-to-have utility functions
     implementation 'org.apache.commons:commons-collections4:4.3'        // Nice-to-have utility functions
 
-
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'           // Logger implementation for tests
-    testImplementation 'org.mock-server:mockserver-netty:5.4.1'         // Mock Web Server
-    testImplementation 'org.mock-server:mockserver-client-java:5.4.1'   // Mock Web Client
     testImplementation 'cglib:cglib-nodep:3.2.9'                        // Spock testing framework
     testImplementation 'org.objenesis:objenesis:3.0.1'                  // Spock testing framework
     testImplementation 'org.spockframework:spock-core:1.2-groovy-2.4'   // Spock testing framework
+
+    integrationImplementation 'org.mock-server:mockserver-netty:5.4.1'         // Mock Web Server
+    integrationImplementation 'org.mock-server:mockserver-client-java:5.4.1'   // Mock Web Client
 }
 
-// Specify `-PshowLogs` or `-PshowOutput` when running Gradle tests to pipe output to the console
-test {
+
+/**
+ * Modifies all tasks of type {@link Test} and configures them to output their corresponding 
+ * tests' failure messages to the console when they occur, rather than a cryptic abbreviation.
+ */
+tasks.withType(Test) {
+    //noinspection GroovyAssignabilityCheck
     testLogging {
-        if(project.hasProperty('showLogs') || project.hasProperty('showOutput')) {
-            showStandardStreams = true
-            exceptionFormat = 'full'
-        }
+        showExceptions = true
+        exceptionFormat = 'full'
     }
 }
-
-apply from: 'attach-sources.gradle'
-apply from: 'add-versions-plugin.gradle'

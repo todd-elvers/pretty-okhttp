@@ -1,7 +1,14 @@
+/**
+ * Ensures sources & JavaDoc artifacts are built and attached when publishing.
+ * 
+ * This enables click-through to sources for users of your library, which is invaluable.
+ * Nothing more than applying this file in the build.gradle is required.
+ */
+
 apply plugin: 'maven'
 
-sourceCompatibility=1.8
-targetCompatibility=1.8
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
