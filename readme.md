@@ -51,11 +51,6 @@ And lastly, if the above is not helpful, you can always build your `Request` fro
 
 ## Examples
 
-I'm a big fan of functional programming and have come to love the functional 
-Try from [vavr](http://www.vavr.io/), so if you prefer [to see examples of pretty-okhttp
-using Vavr click here](docs/vavr-examples.md).  
-
-<br/>
 
 #### Performing a GET to a URL and passing along the status code:
 
