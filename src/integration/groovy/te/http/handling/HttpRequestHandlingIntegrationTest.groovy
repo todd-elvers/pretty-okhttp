@@ -1,6 +1,5 @@
 package te.http.handling
 
-
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import org.apache.commons.lang3.RandomUtils
@@ -12,9 +11,9 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 import spock.lang.Unroll
-import te.http.handling.error.exceptions.HttpClientException
-import te.http.handling.error.exceptions.HttpServerException
-import te.http.handling.error.exceptions.NoResponseException
+import te.http.handling.error.HttpClientException
+import te.http.handling.error.HttpServerException
+import te.http.handling.error.NoResponseException
 
 import java.util.concurrent.TimeUnit
 
@@ -81,11 +80,11 @@ class HttpRequestHandlingIntegrationTest extends Specification {
             webServer.getClient()
                     .when(request().withPath(uri))
                     .respond(
-                    response()
-                            .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code())
-                            .withReasonPhrase(HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase())
-                            .withBody("payload")
-            )
+                            response()
+                                    .withStatusCode(HttpStatusCode.INTERNAL_SERVER_ERROR_500.code())
+                                    .withReasonPhrase(HttpStatusCode.INTERNAL_SERVER_ERROR_500.reasonPhrase())
+                                    .withBody("payload")
+                    )
 
         when:
             requestHandling.executeGET(url)
@@ -122,11 +121,11 @@ class HttpRequestHandlingIntegrationTest extends Specification {
             webServer.getClient()
                     .when(request().withPath(uri))
                     .respond(
-                    response()
-                            .withStatusCode(non200Response.code())
-                            .withReasonPhrase(non200Response.reasonPhrase())
-                            .withBody("payload")
-            )
+                            response()
+                                    .withStatusCode(non200Response.code())
+                                    .withReasonPhrase(non200Response.reasonPhrase())
+                                    .withBody("payload")
+                    )
 
         when:
             requestHandling.executeGET(url)
