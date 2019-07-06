@@ -6,9 +6,10 @@ import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import te.http.handling.error.exceptions.HttpClientException;
-import te.http.handling.error.exceptions.HttpServerException;
-import te.http.handling.error.exceptions.NoResponseException;
+import te.http.handling.error.HttpClientException;
+import te.http.handling.error.HttpServerException;
+import te.http.handling.error.NoResponseException;
+import te.http.handling.json.JsonMarshalling;
 
 /**
  * This Java 8 interface encapsulates what is required to make requests to webservices via OkHttp.

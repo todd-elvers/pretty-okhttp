@@ -6,6 +6,7 @@ import groovy.transform.EqualsAndHashCode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import te.http.handling.json.JsonMarshalling
 
 import java.time.LocalDate
 import java.time.LocalDateTime
