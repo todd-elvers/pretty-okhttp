@@ -4,6 +4,7 @@ import com.google.gson.JsonPrimitive
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import te.http.TestUtils
 import te.http.handling.json.serialize.date.JavaDateToISO8601Serializer
 
 class JavaDateToISO8601SerializerTest extends Specification {
@@ -14,7 +15,7 @@ class JavaDateToISO8601SerializerTest extends Specification {
 
     def "formats a date in ISO8601 and wraps it in a JsonPrimitives"() {
         given:
-            def input = Date.parse("MM/dd/yyyy", "01/02/2017")
+            def input = TestUtils.newDate("01/02/2017")
             def output = new JsonPrimitive("2017-01-02")
 
         expect:

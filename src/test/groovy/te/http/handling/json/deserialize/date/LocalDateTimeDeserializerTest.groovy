@@ -3,8 +3,6 @@ package te.http.handling.json.deserialize.date
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.json.deserialize.date.DateTimeDeserializationException
-import te.http.handling.json.deserialize.date.LocalDateTimeDeserializer
 
 import java.time.LocalDateTime
 
@@ -12,22 +10,25 @@ class LocalDateTimeDeserializerTest extends Specification {
 
     @Shared
     @Subject
-    LocalDateTimeDeserializer dateDeserializer = []
+    LocalDateTimeDeserializer deserializer = []
 
-    def expectedDate = LocalDateTime.parse("2017-01-02T12:13:14")
+    @Shared
+    LocalDateTime expectedDate = LocalDateTime.parse("2017-01-02T12:13:14")
 
     def "can handle timestamps"() {
-        expect:
-            dateDeserializer
-                    .parseDateString("2017-01-02T12:13:14", LocalDateTime) == expectedDate
+        when:
+            LocalDateTime date = deserializer.parseDateString("2017-01-02T12:13:14", LocalDateTime)
+
+        then:
+            date == expectedDate
     }
 
     def "throws LocalDateTimeParsingException with the correct message if date cannot be handled"() {
         given:
-            String dateString = "some-date-string"
+            String dateString = "some-expectedDate-string"
 
         when:
-            dateDeserializer.parseDateString(dateString, LocalDateTime)
+            deserializer.parseDateString(dateString, LocalDateTime)
 
         then:
             def ex = thrown(DateTimeDeserializationException)

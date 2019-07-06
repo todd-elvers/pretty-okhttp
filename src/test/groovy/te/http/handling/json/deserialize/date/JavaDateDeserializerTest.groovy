@@ -1,45 +1,41 @@
 package te.http.handling.json.deserialize.date
 
+import org.apache.commons.lang3.time.FastDateFormat
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.json.deserialize.date.DateTimeDeserializationException
-import te.http.handling.json.deserialize.date.JavaDateDeserializer
+import spock.lang.Unroll
+import te.http.TestUtils
 
 class JavaDateDeserializerTest extends Specification {
 
-    @Shared
     @Subject
-    JavaDateDeserializer dateDeserializer = []
+    @Shared
+    JavaDateDeserializer deserializer = []
 
-    def date = Date.parse("MM/dd/yyyy", "01/02/2017")
+    @Shared
+    Date expectedDate = FastDateFormat.getInstance("MM/dd/yyyy").parse("01/02/2017")
 
-    def "can handle american dates w/ slashes"() {
+    @Unroll("can handle #format format")
+    void "can handle the the expected formats"() {
         expect:
-            dateDeserializer.parseDateString("01/02/2017", Date) == date
+            deserializer.parseDateString(dateString, Date) == expectedDate
+
+        where:
+            format       | dateString
+            "unix epoch" | TestUtils.newDate("01/02/2017").time.toString()
+            "ISO-8601"   | "2017-01-02"
+            "MM/dd/yyyy" | "01/02/2017"
+            "MM-dd-yyyy" | "01-02-2017"
     }
 
-    def "can handle american dates w/ dashes"() {
-        expect:
-            dateDeserializer.parseDateString("01-02-2017", Date) == date
-    }
-
-    def "can handle ISO 8601 dates"() {
-        expect:
-            dateDeserializer.parseDateString("2017-01-02", Date) == date
-    }
-
-    def "can handle Unix Epoch dates"() {
-        expect:
-            dateDeserializer.parseDateString("1508507424", Date) == new Date(1508507424L)
-    }
 
     def "throws DateTimeDeserializationException with the correct message if date cannot be handled"() {
         given:
-            String dateString = "some-date-string"
+            String dateString = "some-expectedDate-string"
 
         when:
-            dateDeserializer.parseDateString(dateString, Date)
+            deserializer.parseDateString(dateString, Date)
 
         then:
             def ex = thrown(DateTimeDeserializationException)

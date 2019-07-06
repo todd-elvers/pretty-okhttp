@@ -10,7 +10,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import te.http.handling.error.HttpClientException
 
-import static te.http.TestHelper.buildEmpty200ResponseFor
+import static te.http.TestUtils.buildEmpty200ResponseFor
 
 @Slf4j
 class POSTRequestHandlingTest extends Specification {

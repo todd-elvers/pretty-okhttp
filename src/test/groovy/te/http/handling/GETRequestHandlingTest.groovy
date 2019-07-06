@@ -7,7 +7,7 @@ import spock.lang.Specification
 import spock.lang.Subject
 import te.http.handling.error.HttpClientException
 
-import static te.http.TestHelper.buildEmpty200ResponseFor
+import static te.http.TestUtils.buildEmpty200ResponseFor
 
 class GETRequestHandlingTest extends Specification {
 

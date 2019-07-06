@@ -6,6 +6,7 @@ import groovy.transform.EqualsAndHashCode
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
+import te.http.TestUtils
 import te.http.handling.json.JsonMarshalling
 
 import java.time.LocalDate
@@ -88,7 +89,7 @@ class JsonMarshallingTest extends Specification {
 
     @EqualsAndHashCode
     static class ObjectWithDates {
-        Date javaDate = Date.parse("MM/dd/yyyy", "09/10/2018")
+        Date javaDate = TestUtils.newDate("09/10/2018")
         LocalDate localDate = LocalDate.parse("2018-09-10")
         LocalDateTime localDateTime = LocalDateTime.parse("2018-09-10T00:00:01")
         LocalDateTime localDateTimeEdgeCase = LocalDateTime.parse("2018-09-10T00:00:00")
