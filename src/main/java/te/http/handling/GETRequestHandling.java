@@ -10,9 +10,9 @@ import javax.annotation.Nullable;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import okhttp3.Request;
-import te.http.handling.error.exceptions.HttpClientException;
-import te.http.handling.error.exceptions.HttpServerException;
-import te.http.handling.error.exceptions.NoResponseException;
+import te.http.handling.error.HttpClientException;
+import te.http.handling.error.HttpServerException;
+import te.http.handling.error.NoResponseException;
 
 public interface GETRequestHandling {
 

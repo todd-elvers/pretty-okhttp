@@ -8,7 +8,7 @@ import okhttp3.RequestBody
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
-import te.http.handling.error.exceptions.HttpClientException
+import te.http.handling.error.HttpClientException
 
 import static te.http.TestHelper.buildEmpty200ResponseFor
 
