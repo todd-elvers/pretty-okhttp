@@ -1,16 +1,20 @@
-/**
- * Adds the 'Versions' plugin to our project which adds the :dependencyUpdates 
- * task that will print to console the latest versions of all dependencies. 
- *
- * This task is modified in this script to only consider release versions of your 
- * dependencies as 'reportable' (e.g. if version 3.5 and version 4.0-RC1 both 
- * exist and you're on version 3.0, the task will report 3.5 as the latest version).
+/*** Adds :dependencyUpdates that prints latest release versions of all dependencies ***/
+
+
+/*
+ * The plugin that contains :dependencyUpdates is the 'Versions' Gradle plugin,
+ * which is applied here and modified to only consider full, release versions.
  * 
- * To revert to the default behavior of the task simply pass in the flag <code>-Pall</code>,
- * and the default behavior will be used (e.g. using our previous example the task would 
- * report 4.0-RC1 4.0-RC1 as the latest version).
+ * Modification:
+ * -------------
+ *      Consider the following scenario:
+ *          Your project -> version 3.0 of dependency X
+ *          Maven repo   -> version 3.5 and 4.0-RC1 of dependency X
  * 
- * See the variable `nonReleaseQualifiers` below for all non-release version keywords. 
+ *      Original task output: 4.0-RC1
+ *      Modified task output: 3.5
+ * 
+ *      To revert to original task behavior simply include the following flag: -Pall
  */
 
 

@@ -1,15 +1,7 @@
-/**
- * Configures Gradle and Intellij for integration testing out of /src/integration/groovy.
- * 
- * This script:
- *  - Configures our Groovy integration classpath and dependencies
- *  - Adds a test to run the integration tests
- *  - Adds integration testing task to the :check
- *  - Tells Intellij to treat the new directory as a test directory
- */
+/*** Configures Gradle & Intellij for integration testing out of /src/integration/groovy. ***/
 
 
-// Configure the classpath
+// Configure the `integration` classpath
 sourceSets {
     integration {
         compileClasspath += main.output + test.output
@@ -17,12 +9,13 @@ sourceSets {
     }
 }
 
-// Configure the available libraries  
+// Configure the libraries available to `integration`  
 configurations {
     integrationImplementation.extendsFrom testImplementation
     integrationRuntime.extendsFrom testRuntime
 }
 
+// Add a task for running all tests in `integration`
 tasks.register("integrationTest", Test) {
     description = 'Runs the integration tests.'
     group = 'verification'
@@ -36,6 +29,8 @@ tasks.register("integrationTest", Test) {
     // This means "when :test and :integrationTest are both scheduled to run, :test must run before :integrationTest"
     mustRunAfter test
 }
+
+// Ensure :integrationTest is run when :check is run 
 check.dependsOn integrationTest
 
 
