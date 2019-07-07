@@ -3,7 +3,7 @@ apply plugin: 'groovy'
 
 apply from: 'add-integration-tests.gradle'
 apply from: 'add-versions-plugin.gradle'
-apply from: 'attach-sources.gradle'
+apply from: 'add-source-artifacts.gradle'
 
 repositories {
     mavenCentral()
