@@ -21,7 +21,6 @@ dependencies {
 
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'           // Logger implementation for tests
     testImplementation 'cglib:cglib-nodep:3.2.12'                       // Spock testing framework
-    testImplementation 'org.objenesis:objenesis:3.0.1'                  // Spock testing framework
     testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'   // Spock testing framework
 
     integrationImplementation 'org.mock-server:mockserver-netty:5.6.0'         // Mock Web Server
