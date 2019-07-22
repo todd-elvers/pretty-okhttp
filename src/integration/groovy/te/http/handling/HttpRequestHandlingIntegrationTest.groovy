@@ -209,9 +209,9 @@ class HttpRequestHandlingIntegrationTest extends Specification {
             def exception = thrown(NoResponseException)
 
         and: 'we correctly detected a read timeout'
-            !exception.isConnectTimeout()
+            exception.isReadTimeout()
 
         and: 'we did not detect a connect timeout'
-            exception.isReadTimeout()
+            !exception.isConnectTimeout()
     }
 }
