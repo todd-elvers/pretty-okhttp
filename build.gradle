@@ -10,21 +10,21 @@ repositories {
 }
 
 dependencies {
-    api 'com.squareup.okhttp3:okhttp:4.0.0'                             // Robust, thread-safe HTTP handling
+    api 'com.squareup.okhttp3:okhttp:4.0.1'                             // Robust, thread-safe HTTP handling
     api 'com.google.code.gson:gson:2.8.5'                               // Json serialization & deserialization
 
     implementation 'io.vavr:vavr:0.10.0'                                // Functional Java features
     implementation 'org.slf4j:slf4j-api:1.7.26'                         // Implementation-agnostic logging
     implementation 'com.google.code.findbugs:jsr305:3.0.2'              // @Nullable and other annotations
     implementation 'org.apache.commons:commons-lang3:3.9'               // Nice-to-have utility functions
-    implementation 'org.apache.commons:commons-collections4:4.3'        // Nice-to-have utility functions
+    implementation 'org.apache.commons:commons-collections4:4.4'        // Nice-to-have utility functions
 
     testImplementation 'ch.qos.logback:logback-classic:1.2.3'           // Logger implementation for tests
     testImplementation 'cglib:cglib-nodep:3.2.12'                       // Spock testing framework
     testImplementation 'org.spockframework:spock-core:1.3-groovy-2.5'   // Spock testing framework
 
-    integrationImplementation 'org.mock-server:mockserver-netty:5.6.0'         // Mock Web Server
-    integrationImplementation 'org.mock-server:mockserver-client-java:5.6.0'   // Mock Web Client
+    integrationImplementation 'org.mock-server:mockserver-netty:5.6.1'         // Mock Web Server
+    integrationImplementation 'org.mock-server:mockserver-client-java:5.6.1'   // Mock Web Client
 }
 
 
