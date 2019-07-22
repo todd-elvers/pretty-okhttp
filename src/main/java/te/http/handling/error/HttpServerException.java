@@ -5,7 +5,8 @@ import java.io.IOException;
 import te.http.handling.HttpResponse;
 
 /**
- * Represents a response that returned a 500-level status code
+ * Represents a request that failed due to something server-side,
+ * e.g. a server with a failing dependency, etc.
  */
 public class HttpServerException extends IOException {
 

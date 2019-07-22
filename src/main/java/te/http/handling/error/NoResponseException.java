@@ -5,7 +5,7 @@ import java.io.IOException;
 import okhttp3.Request;
 
 /**
- * Occurs when there is no response from the requested resource.
+ * Represents a request that failed due to the server never responding.
  */
 public class NoResponseException extends IOException {
 

@@ -17,8 +17,14 @@ import te.http.handling.error.NoResponseException;
 
 public interface POSTRequestHandling {
 
+    /**
+     * @see HttpRequestHandling#getDefaultHeaders()
+     */
     Headers getDefaultHeaders();
 
+    /**
+     * @see HttpRequestHandling#executeRequest(Request)
+     */
     HttpResponse executeRequest(Request request) throws HttpClientException, HttpServerException, NoResponseException;
 
     /**

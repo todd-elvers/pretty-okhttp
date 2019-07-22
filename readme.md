@@ -4,7 +4,7 @@ pretty-okhttp
 Combines the powers of [OkHttp](http://square.github.io/okhttp/), 
 [Java 8 interfaces](https://docs.oracle.com/javase/tutorial/java/IandI/defaultmethods.html),
 and Google's [Gson](https://github.com/google/gson) to create a thread-safe,  
-easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
+easy-to-use, and easy-to-test interface for handling HTTP requests.
 
 
 <br/>
@@ -13,7 +13,7 @@ easy-to-use, and easy-to-test Java 8 interface for handling HTTP requests.
 
 This library requires zero configuration, allows for a high degree of customization, and provides:
 * Convenience methods to simplify common operations (e.g. normal GET/POST, POSTing a form, etc.)
-* Serialization/deserialization support for `Date`, `LocalDate`, and `LocalDateTime` classes
+* JSON serialization/deserialization support for `Date`, `LocalDate`, and `LocalDateTime` classes
     * Multiple formats are attempted during deserialization:
         * [Unix Epoch](https://en.wikipedia.org/wiki/Unix_time)
         * [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601)
@@ -21,14 +21,14 @@ This library requires zero configuration, allows for a high degree of customizat
         * MM-dd-yyyy
 
 
-The goal was to create an easier to use version of OkHttp that yielded in prettier code.
+The goal was to create an easier to use version of OkHttp that yielded prettier code.
 
 <br/>
 
 ## How to use it
 
 1. Make your class implement `HttpRequestHandling`
-    * Override any of the default behavior if necessary (e.g. `getDefaultHeader()`, `isNon200ResponseExceptional()`, etc.) 
+    * Override any of the default behavior if necessary (e.g. `getDefaultHeader()`, `shouldThrowExceptionForNon200()`, etc.) 
 2. Make a request to your desired endpoint 
     * For GET requests = `executeGET`
     * For POST requests = `executePOST`, or `executeFormPOST`
@@ -56,16 +56,16 @@ And lastly, if the above is not helpful, you can always build your `Request` fro
 
 ```java
 class WebsiteHealthChecker implements HttpRequestHandling {
-    public Optional<Integer> fetchStatusCodeFromService(String url) {
+    public Optional<Integer> fetchStatusCode(String url) {
+        Integer statusCode = null;
+        
         try {
-            return Optional.of(
-                    executeFormPOST(url, formData).getStatusCode()
-            );
+            statusCode = executeFormPOST(url, formData).getStatusCode(); 
         } catch(IOException ex) {
-            // Do nothing
+            // ...
         }
         
-        return Optional.empty();
+        return Optional.ofNullable(statusCode);
     }
 }
 ```
@@ -85,7 +85,7 @@ class WebsiteHealthCheckerTest extends Specification {
             }
         
         when: 'we fetch the status code for some service URL'
-            Optional<Integer> result = websiteChecker.fetchStatusCodeFromService("some-url")
+            Optional<Integer> result = websiteChecker.fetchStatusCode("some-url")
         
         then: 'the exception was swallowed and we received an empty optional'
             noExceptionsThrown()
@@ -138,7 +138,7 @@ class UserRetriever implements HttpRequestHandling {
         User user = null;
 
         try {
-            HttpResponse httpResponse = executeGET(url);
+            HttpResponse httpResponse = executeGET(url);                // Uses the headers from above
             user = fromJson(httpResponse.getBodyOrNull(), User.class);
         } catch(HttpClientException ex) {
             handle400();
@@ -196,4 +196,4 @@ In your `build.gradle` file:
 * Under `repositories`
     * Add `maven { url "https://jitpack.io" }`, making sure it's the _last_ repo declared
 * Under `dependencies`
-    * Add `compile 'com.github.todd-elvers:pretty-okhttp:4.0.0'`
+    * Add `compile 'com.github.todd-elvers:pretty-okhttp:5.0.0-SNAPSHOT'`

@@ -36,6 +36,10 @@ import te.http.handling.json.serialize.date.LocalDateToISO8601Serializer;
  */
 public interface JsonMarshalling {
 
+    /**
+     * @return a reference to the static {@link Gson} instance used for all JSON marshalling
+     * (override this method to customize the {@link Gson} instance).
+     */
     default Gson getJsonMarshaller() {
         return Defaults.jsonMarshaller;
     }
@@ -44,10 +48,17 @@ public interface JsonMarshalling {
         return getJsonMarshaller().toJson(anything);
     }
 
+    /**
+     * Converts a blob of JSON into an object of type T.
+     */
     default <T> T fromJson(String json, Class<T> classOfT) {
         return getJsonMarshaller().fromJson(json, classOfT);
     }
 
+    /**
+     * Converts a blob of JSON into a object of type List&lt;T&gt;.  Use this method when your
+     * JSON blob represents an array of objects instead of a single object itself.
+     */
     default <T> List<T> fromJsonList(String json, Class<T> classOfT) {
         return getJsonMarshaller().fromJson(json, new ListParameterizedType(classOfT));
     }
