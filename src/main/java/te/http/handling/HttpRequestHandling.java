@@ -1,28 +1,26 @@
 package te.http.handling;
 
 import io.vavr.control.Try;
-import okhttp3.Headers;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import te.http.handling.error.HttpClientException;
 import te.http.handling.error.HttpServerException;
 import te.http.handling.error.NoResponseException;
 import te.http.handling.json.JsonMarshalling;
 
 /**
- * This Java 8 interface encapsulates what is required to make requests to webservices via OkHttp.
+ * This interface provides a simplified way to make requests to webservices via OkHttp.
  *
- * If you require a special configuration of either the OkHttp client or the JSON marshaller, simply
- * override the relevant methods.
- *
- * @apiNote All fields in this interface are implicitly public, static, and final.
+ * <p>If you require a special configuration of either the OkHttp client or the JSON marshaller, simply
+ * override {@link this#getHttpClient()} or {@link this#getJsonMarshaller()} respectively.
  */
 public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHandling, JsonMarshalling {
 
     MediaType applicationJSON = Defaults.applicationJSON;
 
+    /**
+     * @return a reference to the static OkHttp instance used for all HTTP request handling
+     * (override this method to customize the OkHttp instanced used).
+     */
     default OkHttpClient getHttpClient() {
         return Defaults.httpClient;
     }
@@ -38,11 +36,6 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
     default Headers getDefaultHeaders() {
         return Defaults.jsonHeaders;
     }
-
-    /**
-     * @return whether or not a non-200 level response should cause an exception to be thrown
-     */
-    default boolean isNon200ResponseExceptional() { return true; }
 
     /**
      * Executes a given {@link Request} and returns the {@link Response} wrapped in a {@link
@@ -68,32 +61,48 @@ public interface HttpRequestHandling extends GETRequestHandling, POSTRequestHand
                 .of(HttpResponse::new)
                 .getOrElseThrow((exception) -> new NoResponseException(exception, request));
 
-        if (response.isNot200() && isNon200ResponseExceptional()) {
-            return handleNon200Response(response);
+        if (response.isNot200() && shouldThrowExceptionForNon200()) {
+            handleNon200Response(response);
         }
 
         return response;
     }
 
     /**
+     * @return whether or not a non-200 level response should cause an exception to be thrown
+     */
+    default boolean shouldThrowExceptionForNon200() {
+        return true;
+    }
+
+    /**
      * Defines the behavior for when a response has a non-200 level status code (300, 400, 500, etc.).
      *
-     * <p>By default, 300 level status codes do nothing, 400 level status codes
-     * throw {@link HttpClientException}s and 500 level status codes throw
-     * {@link HttpServerException}.
+     * <p>By default, 300 level status codes do nothing, 400 level status codes throw {@link HttpClientException}s
+     * and 500 level status codes throw {@link HttpServerException}.
      */
-    default HttpResponse handleNon200Response(HttpResponse response) throws HttpClientException, HttpServerException {
-        int statusCode = response.getStatusCode();
-
-        if (statusCode >= 400 && statusCode < 500) {
+    default void handleNon200Response(HttpResponse response) throws HttpClientException, HttpServerException {
+        if (isHttpClientError(response.getStatusCode())) {
             throw new HttpClientException(response);
         }
 
-        if (statusCode >= 500) {
+        if (isHttpServerError(response.getStatusCode())) {
             throw new HttpServerException(response);
         }
+    }
 
-        return response;
+    /**
+     * @return true if, and only if, the provided status code should be considered a client-side error
+     */
+    default boolean isHttpClientError(int statusCode) {
+        return statusCode >= 400 && statusCode < 500;
+    }
+
+    /**
+     * @return true if, and only if, the provided status code should be considered a server-side error
+     */
+    default boolean isHttpServerError(int statusCode) {
+        return statusCode >= 500;
     }
 
     interface Defaults {

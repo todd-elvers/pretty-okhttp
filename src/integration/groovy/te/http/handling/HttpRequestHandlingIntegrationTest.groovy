@@ -112,7 +112,7 @@ class HttpRequestHandlingIntegrationTest extends Specification {
         given:
             HttpRequestHandling requestHandling = new HttpRequestHandling() {
                 @Override
-                boolean isNon200ResponseExceptional() {
+                boolean shouldThrowExceptionForNon200() {
                     return false
                 }
             }
