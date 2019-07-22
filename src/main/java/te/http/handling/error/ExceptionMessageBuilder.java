@@ -3,7 +3,7 @@ package te.http.handling.error;
 import okhttp3.Request;
 import te.http.handling.HttpResponse;
 
-public class ExceptionMessageBuilder {
+class ExceptionMessageBuilder {
 
     private TimeoutDetector timeoutDetector = new TimeoutDetector();
 

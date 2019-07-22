@@ -1,12 +1,12 @@
 package te.http.handling.error;
 
 import java.net.SocketTimeoutException;
-import java.util.Optional;
 
 /**
- * Tool for distinguishing between socket connect timeouts and socket read timeouts.
+ * Temporary tool for distinguishing between socket connect timeouts and socket
+ * read timeouts. Will be removed when OkHttp gets around to adding the feature.
  */
-public class TimeoutDetector {
+class TimeoutDetector {
     private static final String READ_TIMEOUT_TEXT = "Read timed out";
     private static final String CONNECT_TIMEOUT_TEXT = "connect timed out";
 
@@ -16,11 +16,9 @@ public class TimeoutDetector {
      */
     public boolean isConnectTimeout(Throwable throwable) {
         if (throwable instanceof SocketTimeoutException) {
-            return Optional.of(throwable)
-                    .map(Throwable::fillInStackTrace)
-                    .map(Throwable::getMessage)
-                    .map(msg -> msg.contains(CONNECT_TIMEOUT_TEXT))
-                    .orElse(false);
+            return throwable.fillInStackTrace()
+                    .getMessage()
+                    .contains(CONNECT_TIMEOUT_TEXT);
         }
 
         return false;
@@ -33,12 +31,10 @@ public class TimeoutDetector {
      */
     public boolean isReadTimeout(Throwable throwable) {
         if (throwable instanceof SocketTimeoutException && throwable.getCause() != null) {
-            return Optional.of(throwable.getCause())
-                    .filter(cause -> cause instanceof SocketTimeoutException)
-                    .map(Throwable::fillInStackTrace)
-                    .map(Throwable::getMessage)
-                    .map(message -> message.contains(READ_TIMEOUT_TEXT))
-                    .orElse(false);
+            return throwable.getCause()
+                    .fillInStackTrace()
+                    .getMessage()
+                    .contains(READ_TIMEOUT_TEXT);
         }
 
         return false;
